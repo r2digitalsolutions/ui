@@ -63,6 +63,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.16.1)(vite@6.0.7(jiti@1.21.7)(yaml@2.7.0))
+      action@v3:
+        specifier: link:changesets/action@v3
+        version: link:changesets/action@v3
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)

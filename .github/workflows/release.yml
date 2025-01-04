@@ -28,7 +28,7 @@ jobs:
       # 4. Crear y publicar la versión
       - name: Create and publish release
         id: changesets
-        uses: changesets/action
+        uses: changesets/action@v3
         with:
           publish: pnpm
         env:
