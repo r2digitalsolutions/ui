@@ -28,11 +28,11 @@ jobs:
       # 4. Crear y publicar la versión
       - name: Create and publish release
         id: changesets
-        uses: changesets/action@v2
+        uses: changesets/action
         with:
           publish: pnpm
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # 5. Notificar el resultado
