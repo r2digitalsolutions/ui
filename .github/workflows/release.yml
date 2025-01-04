@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout del código
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configurar Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
+
+      # 3. Instalar dependencias
+      - name: Install dependencies
+        run: pnpm install
+
+      # 4. Crear y publicar la versión
+      - name: Create and publish release
+        id: changesets
+        uses: changesets/action@v2
+        with:
+          publish: pnpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # 5. Notificar el resultado
+      - name: Notify about the release
+        if: steps.changesets.outputs.published == 'true'
+        run: echo "Release has been published!"
