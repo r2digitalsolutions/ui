@@ -6,13 +6,13 @@ on:
       - closed
 
 permissions:
-  contents: write # Permite escribir contenido en el repositorio
-  packages: write # Permite publicar en GitHub Packages (opcional)
-  pull-requests: write # Permite manejar PRs si es necesario
+  contents: write
+  packages: write
+  pull-requests: write
 
 jobs:
   publish:
-    if: ${{ github.event.pull_request.merged == true }} # Solo si la PR fue mergeada
+    if: ${{ github.event.pull_request.merged == true }}
     name: Publish to npm and Create Release
     runs-on: ubuntu-latest
 
@@ -28,24 +28,25 @@ jobs:
           node-version: 20.x
           cache: pnpm
 
-      - uses: pnpm/action-setup@v4
+      - name: Setup pnpm
+        run: npm install -g pnpm # Instala `pnpm` globalmente para que esté disponible en el entorno
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Create Release
-        run: pnpm changeset:release # Lanza el comando para realizar la versión final
+        run: pnpm changeset:release
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          release_name: Release ${{ steps.get_tag.outputs.tag }}
+          tag_name: ${{ github.event.pull_request.head.ref }}
+          release_name: Release ${{ github.event.pull_request.head.ref }}
           body: |
             This release includes:
             - All changes from PR: ${{ github.event.pull_request.html_url }}
