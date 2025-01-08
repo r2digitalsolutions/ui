@@ -1,17 +1,14 @@
 name: Publish Release
 
 on:
-  push:
-    branches:
-      - main # Este evento se disparará después de un merge en la rama principal
   pull_request:
     types:
-      - closed # Puedes mantener esta parte también para verificar el cierre de un PR
+      - closed
 
 permissions:
-  contents: write
-  packages: write
-  pull-requests: write
+  contents: write # Permite escribir contenido en el repositorio
+  packages: write # Permite publicar en GitHub Packages (opcional)
+  pull-requests: write # Permite manejar PRs si es necesario
 
 jobs:
   publish:
@@ -23,7 +20,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Asegúrate de obtener todo el historial de Git
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -31,25 +28,24 @@ jobs:
           node-version: 20.x
           cache: pnpm
 
-      - name: Setup pnpm
-        run: npm install -g pnpm # Instala pnpm globalmente
+      - uses: pnpm/action-setup@v4
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Create Release
-        run: pnpm changeset:release
+        run: pnpm changeset:release # Lanza el comando para realizar la versión final
 
       - name: Publish to npm
-        run: pnpm publish --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ github.sha }} # Usar el commit hash como tag
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          release_name: Release ${{ steps.get_tag.outputs.tag }}
           body: |
             This release includes:
             - All changes from PR: ${{ github.event.pull_request.html_url }}
