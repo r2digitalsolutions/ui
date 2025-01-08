@@ -1,9 +1,12 @@
 name: Publish Release
 
 on:
+  push:
+    branches:
+      - main # Este evento se disparará después de un merge en la rama principal
   pull_request:
     types:
-      - closed
+      - closed # Puedes mantener esta parte también para verificar el cierre de un PR
 
 permissions:
   contents: write
@@ -20,7 +23,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Asegúrate de obtener todo el historial de Git
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -29,7 +32,7 @@ jobs:
           cache: pnpm
 
       - name: Setup pnpm
-        run: npm install -g pnpm # Instala `pnpm` globalmente para que esté disponible en el entorno
+        run: npm install -g pnpm # Instala pnpm globalmente
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -45,8 +48,8 @@ jobs:
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ github.event.pull_request.head.ref }}
-          release_name: Release ${{ github.event.pull_request.head.ref }}
+          tag_name: ${{ github.sha }} # Usar el commit hash como tag
+          release_name: Release ${{ github.sha }}
           body: |
             This release includes:
             - All changes from PR: ${{ github.event.pull_request.html_url }}
