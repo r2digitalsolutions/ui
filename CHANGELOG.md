@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.2.4
+
+### Patch Changes
+
+- 4ecf0d7: example
+
 ## 0.2.3
 
 ### Patch Changes
