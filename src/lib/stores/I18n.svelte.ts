@@ -27,6 +27,11 @@ export class StoreI18n {
     }
   })
 
+  init({ language, translations }: { language: string, translations: I18nTranslationType }) {
+    this.#language = language;
+    this.#translations = translations;
+  }
+
   get language() {
     return this.#language;
   }

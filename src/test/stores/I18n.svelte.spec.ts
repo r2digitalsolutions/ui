@@ -29,4 +29,22 @@ describe('StoreI18n', () => {
     expect(store.t('hello')).toEqual('hola');
     expect(store.t('not-found')).toEqual('--not-found--');
   });
+
+  test('should be able to init', () => {
+    const store = new StoreI18n('en', {});
+
+    store.init({
+      language: 'es',
+      translations: {
+        es: {
+          hello: 'hola'
+        },
+        en: {
+          hello: 'hello'
+        }
+      }
+    });
+
+    expect(store.t('hello')).toEqual('hola');
+  });
 });
