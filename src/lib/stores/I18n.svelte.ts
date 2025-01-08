@@ -1,4 +1,4 @@
-export type I18nTranslationType = Record<string, Record<string, string>>;
+import type { I18nTranslationType } from "$lib/types/translates.type.js";
 
 export class StoreI18n {
   #language: string = $state("en");
