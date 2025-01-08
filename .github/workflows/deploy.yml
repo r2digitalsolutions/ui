@@ -23,12 +23,12 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 8 # Especifica la versión de pnpm
+          version: 9.5.0 # Especifica la versión de pnpm
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: pnpm
 
       - name: Install
