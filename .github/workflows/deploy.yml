@@ -21,21 +21,26 @@ jobs:
           node-version: 18
           cache: pnpm
 
-      # 3. Instalar dependencias
+      # 3. Instalar pnpm
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm
+
+      # 4. Instalar dependencias
       - name: Install dependencies
         run: pnpm install
 
-      # 4. Crear y publicar la versión
+      # 5. Crear y publicar la versión
       - name: Create and publish release
         id: changesets
         uses: changesets/action@v1
         with:
           publish: pnpm
         env:
-          GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # 5. Notificar el resultado
+      # 6. Notificar el resultado
       - name: Notify about the release
         if: steps.changesets.outputs.published == 'true'
         run: echo "Release has been published!"
