@@ -3,6 +3,11 @@ name: Create Pull Request
 on:
   push:
     branches: [main]
+
+permissions:
+  contents: write # Permite leer y escribir contenido en el repositorio (commits, pushes, etc.)
+  pull-requests: write
+
 jobs:
   create-release:
     permissions:
