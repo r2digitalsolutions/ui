@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.2.5
+
+### Patch Changes
+
+- 5605b72: fix
+
 ## 0.2.4
 
 ### Patch Changes
