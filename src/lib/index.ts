@@ -1,1 +1,2 @@
-// Reexport your entry components here
+export * from './stores/I18n.svelte.js';
+export * from './settings/index.js';
