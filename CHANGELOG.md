@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.2.6
+
+### Patch Changes
+
+- f4b7266: opoç
+
 ## 0.2.5
 
 ### Patch Changes
