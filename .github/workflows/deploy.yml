@@ -1,10 +1,7 @@
 name: Release Workflow
 on:
   release:
-    branches:
-      - main
-    types:
-      - released
+    types: [published]
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
