@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.3.0
+
+### Minor Changes
+
+- 35de4e1: feat: alert
+- 2174568: fix: versions
+
 ## 0.2.9
 
 ### Patch Changes
