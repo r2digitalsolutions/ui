@@ -23,7 +23,8 @@
     "build-storybook": "storybook build",
     "changeset": "changeset",
     "changeset:publish": "changeset publish",
-    "changeset:version": "changeset version"
+    "changeset:version": "changeset version",
+    "ci:publish": "changeset:publish && npm publish"
   },
   "files": [
     "dist",
