@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.4.1
+
+### Patch Changes
+
+- bdc63f1: fix: add tablelist
+
 ## 0.4.0
 
 ### Minor Changes
