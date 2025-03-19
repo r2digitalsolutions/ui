@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.4.0
+
+### Minor Changes
+
+- ea2dcbc: feat: add tablelist
+
 ## 0.3.0
 
 ### Minor Changes
