@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- b94da95: feat: update versions packages
+
 ## 0.4.1
 
 ### Patch Changes
