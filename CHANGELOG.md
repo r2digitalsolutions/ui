@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.6.1
+
+### Patch Changes
+
+- 2717e10: fix: test i18n
+
 ## 0.6.0
 
 ### Minor Changes
