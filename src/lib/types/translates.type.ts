@@ -1,1 +1,2 @@
-export type I18nTranslationType = Record<string, Record<string, string>>;
+export type NestedTranslations = string | { [key: string]: NestedTranslations };
+export type I18nTranslationType = Record<string, NestedTranslations>;
