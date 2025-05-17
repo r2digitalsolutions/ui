@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.5.1
+
+### Patch Changes
+
+- a27bcca: fix:update versions packages
+
 ## 0.5.0
 
 ### Minor Changes
