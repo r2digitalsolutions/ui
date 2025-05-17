@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.6.0
+
+### Minor Changes
+
+- 9136cf0: feat: add anidade object nested i18nStore
+
 ## 0.5.1
 
 ### Patch Changes
