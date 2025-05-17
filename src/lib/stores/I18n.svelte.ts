@@ -2,6 +2,7 @@ import type { I18nTranslationType } from "$lib/types/translates.type.js";
 
 export class StoreI18n {
   #language: string = $state("en");
+  #defaultLanguage: string = "en";
   #translations: I18nTranslationType = $state({});
 
   constructor(currentLanguage: string, translations: I18nTranslationType = {}) {
@@ -14,7 +15,7 @@ export class StoreI18n {
     this.#translations;
 
     return (key: string, params: Record<string, string> = {}) => {
-      const translations = this.#translations[this.#language];
+      const translations = this.#translations?.[this.#language || this.#defaultLanguage];
       const translation = this.#getTranslationValue(translations, key);
 
       if (!translation || typeof translation !== "string") {
@@ -34,7 +35,7 @@ export class StoreI18n {
 
   #getTranslationValue(translations: any, key: string): string | undefined {
     // Intentar primero como clave plana
-    if (translations[key]) return translations[key];
+    if (translations?.[key]) return translations[key];
 
     // Si no existe como clave plana, intentar lookup recursivo
     return key.split('.').reduce((acc, part) => acc?.[part], translations);
