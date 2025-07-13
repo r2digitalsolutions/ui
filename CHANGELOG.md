@@ -1,5 +1,16 @@
 # @r2digisolutions/ui
 
+## 0.8.0
+
+### Minor Changes
+
+- 57006fc: feat: add card
+- b6534a7: feat: add avatar component
+
+### Patch Changes
+
+- 21e481b: chore: add test in alert
+
 ## 0.7.0
 
 ### Minor Changes
