@@ -5,6 +5,6 @@ export interface Props {
   class?: ClassValue;
   message: string;
   type?: 'error' | 'success' | 'warning' | 'info';
-  errors?: Record<string, string>;
+  errors?: Record<string, string[]>;
   children?: Snippet;
 }

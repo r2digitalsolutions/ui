@@ -3,15 +3,24 @@
 	import type { Props } from './type.js';
 
 	const { message, type = 'error', errors, children, ...props }: Props = $props();
+
+	const class_type: Record<typeof type, string> = {
+		error:
+			'border-red-200 border bg-red-50 text-sm text-red-800 dark:border-red-900 dark:bg-red-800/10 dark:text-red-500',
+		warning:
+			'border-yellow-200 border bg-yellow-50 text-sm text-yellow-800 dark:border-yellow-900 dark:bg-yellow-800/10 dark:text-yellow-500',
+		info: 'border-blue-200 border bg-blue-50 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-800/10 dark:text-blue-500',
+		success:
+			'border-green-200 border bg-green-50 text-sm text-green-800 dark:border-green-900 dark:bg-green-800/10 dark:text-green-500'
+	};
+
+	const class_types = $derived(class_type[type]);
 </script>
 
 <div
 	in:fade={{ duration: 300 }}
 	out:fade={{ duration: 300 }}
-	class={[
-		'rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-800/10 dark:text-red-500',
-		props.class
-	]}
+	class={['rounded-lg p-4', class_types, props.class]}
 	role="alert"
 	tabindex="-1"
 	aria-labelledby="hs-with-list-label"
