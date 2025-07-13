@@ -56,3 +56,13 @@ To publish your library to [npm](https://www.npmjs.com):
 ```bash
 npm publish
 ```
+
+## Publishing
+
+Go into the `package.json` and give your package the desired name through the `"name"` option.
+
+To publish your library to [npm](https://www.npmjs.com):
+
+```bash
+npm publish
+```
