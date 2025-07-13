@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.7.0
+
+### Minor Changes
+
+- 78581d6: feat: add new versions
+- 9cc320e: chore: update versions
+
 ## 0.6.1
 
 ### Patch Changes
