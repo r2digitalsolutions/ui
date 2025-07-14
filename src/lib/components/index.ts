@@ -7,6 +7,7 @@ import CardContent from './ui/Card/CardContent.svelte';
 import CardFooter from './ui/Card/CardFooter.svelte';
 import CardHeader from './ui/Card/CardHeader.svelte';
 import Avatar from './ui/Avatar/Avatar.svelte';
+import Container from './ui/Container/Container.svelte';
 
 export {
   Alert,
@@ -17,5 +18,6 @@ export {
   CardDescription,
   CardContent,
   CardFooter,
-  Avatar
+  Avatar,
+  Container,
 };

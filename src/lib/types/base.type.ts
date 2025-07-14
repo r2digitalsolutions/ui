@@ -1,5 +1,5 @@
 import type { ClassValue } from "svelte/elements";
 
-export interface BaseProps {
+export interface IBaseProps {
   class?: ClassValue;
 }
