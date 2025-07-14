@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.9.0
+
+### Minor Changes
+
+- f478c1c: feat: add container component
+
 ## 0.8.0
 
 ### Minor Changes
