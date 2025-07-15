@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.11.0
+
+### Minor Changes
+
+- 88bcfef: feat: add loading
+
 ## 0.10.1
 
 ### Patch Changes
