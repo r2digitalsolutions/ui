@@ -10,18 +10,20 @@ import Avatar from './ui/Avatar/Avatar.svelte';
 import Container from './ui/Container/Container.svelte';
 import Section from './ui/Section/Section.svelte';
 import Loading from './ui/Loading/Loading.svelte';
+import Button from './ui/Button/Button.svelte';
 
 export {
   Alert,
-  TableList,
+  Avatar,
+  Button,
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
   CardFooter,
-  Avatar,
   Container,
   Section,
   Loading,
+  TableList,
 };
