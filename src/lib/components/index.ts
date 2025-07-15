@@ -8,6 +8,7 @@ import CardFooter from './ui/Card/CardFooter.svelte';
 import CardHeader from './ui/Card/CardHeader.svelte';
 import Avatar from './ui/Avatar/Avatar.svelte';
 import Container from './ui/Container/Container.svelte';
+import Section from './ui/Section/Section.svelte';
 
 export {
   Alert,
@@ -20,4 +21,5 @@ export {
   CardFooter,
   Avatar,
   Container,
+  Section,
 };
