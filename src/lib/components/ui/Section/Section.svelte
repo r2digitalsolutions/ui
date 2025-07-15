@@ -9,7 +9,7 @@
 </section>
 
 <style lang="postcss">
-	section + section {
+	section + :global(section) {
 		&:nth-child(odd) {
 			@apply bg-gray-50 dark:bg-gray-900;
 		}
