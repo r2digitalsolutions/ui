@@ -26,7 +26,14 @@
 		ghost:
 			'text-purple-600 hover:bg-purple-50 hover:text-purple-700 focus:ring-purple-500 bg-transparent shadow-none hover:shadow-md',
 		gradient:
-			'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 focus:ring-purple-500 shadow-purple-500/30'
+			'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 focus:ring-purple-500 shadow-purple-500/30',
+		danger:
+			'bg-gradient-to-r from-red-500 via-purple-500 to-indigo-500 text-white hover:from-red-600 hover:via-purple-600 hover:to-indigo-600 focus:ring-purple-500 shadow-purple-500/30',
+		success:
+			'bg-gradient-to-r from-green-500 via-purple-500 to-indigo-500 text-white hover:from-green-600 hover:via-purple-600 hover:to-indigo-600 focus:ring-purple-500 shadow-purple-500/30',
+		warning:
+			'bg-gradient-to-r from-yellow-500 via-purple-500 to-indigo-500 text-white hover:from-yellow-600 hover:via-purple-600 hover:to-indigo-600 focus:ring-purple-500 shadow-purple-500/30',
+		info: 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 text-white hover:from-blue-600 hover:via-purple-600 hover:to-indigo-600 focus:ring-purple-500 shadow-purple-500/30'
 	};
 
 	const sizeClasses: Record<typeof size, string> = {
