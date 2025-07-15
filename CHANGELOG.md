@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.10.0
+
+### Minor Changes
+
+- ce5b916: feat: add section and update versions
+
 ## 0.9.0
 
 ### Minor Changes
