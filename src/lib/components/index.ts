@@ -11,6 +11,7 @@ import Container from './ui/Container/Container.svelte';
 import Section from './ui/Section/Section.svelte';
 import Loading from './ui/Loading/Loading.svelte';
 import Button from './ui/Button/Button.svelte';
+import Heading from './ui/Heading/Heading.svelte';
 
 export {
   Alert,
@@ -26,4 +27,5 @@ export {
   Section,
   Loading,
   TableList,
+  Heading,
 };

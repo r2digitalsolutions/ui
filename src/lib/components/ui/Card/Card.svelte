@@ -13,7 +13,7 @@
 	aria-label="Card"
 	{onclick}
 	class={[
-		'overflow-hidden rounded-3xl border border-white/50 bg-white text-black shadow-sm backdrop-blur-xl dark:border-neutral-700 dark:bg-neutral-900 dark:text-white',
+		'rounded-3xl border border-white/50 bg-white text-black shadow-sm backdrop-blur-xl dark:border-neutral-700 dark:bg-neutral-900 dark:text-white',
 		props.class
 	]}
 >
