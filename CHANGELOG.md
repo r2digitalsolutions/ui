@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.12.1
+
+### Patch Changes
+
+- d97fbbc: feat: add variant buttons
+
 ## 0.12.0
 
 ### Minor Changes
