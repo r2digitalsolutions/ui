@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.12.0
+
+### Minor Changes
+
+- aceb2d9: feat: add button
+
 ## 0.11.0
 
 ### Minor Changes
