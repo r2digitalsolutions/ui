@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.13.0
+
+### Minor Changes
+
+- cbb50d6: feat: update versions and add Heading
+
 ## 0.12.1
 
 ### Patch Changes
