@@ -9,6 +9,7 @@ import CardHeader from './ui/Card/CardHeader.svelte';
 import Avatar from './ui/Avatar/Avatar.svelte';
 import Container from './ui/Container/Container.svelte';
 import Section from './ui/Section/Section.svelte';
+import Loading from './ui/Loading/Loading.svelte';
 
 export {
   Alert,
@@ -22,4 +23,5 @@ export {
   Avatar,
   Container,
   Section,
+  Loading,
 };
