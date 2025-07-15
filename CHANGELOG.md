@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.10.1
+
+### Patch Changes
+
+- 1905787: fix: testing
+
 ## 0.10.0
 
 ### Minor Changes
