@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.13.1
+
+### Patch Changes
+
+- cd811d1: fix: section class
+
 ## 0.13.0
 
 ### Minor Changes
