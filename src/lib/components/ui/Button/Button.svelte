@@ -51,15 +51,15 @@
 		'8xl': 'px-11 py-3 text-base gap-3'
 	};
 
-	const classes: ClassValue = [
+	const classes: ClassValue = $derived([
 		baseClasses,
 		variantClasses[variant],
 		sizeClasses[size],
 		disabled || isLoading ? 'opacity-50 cursor-not-allowed transform-none hover:scale-100' : '',
 		props.class
-	];
+	]);
 
-	const Tag = props.href ? 'a' : 'button';
+	const Tag = $derived(props.href ? 'a' : 'button');
 </script>
 
 <svelte:element this={Tag} {...props} class={classes} disabled={disabled || isLoading}>
