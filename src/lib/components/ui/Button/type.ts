@@ -6,7 +6,7 @@ export type TButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'gr
 export type TButtonType = 'submit' | 'reset' | 'button';
 
 export interface Props extends IBaseProps {
-  onclick?: () => void;
+  onclick?: (event: MouseEvent) => void;
   variant?: TButtonVariant;
   size?: TSize;
   isLoading?: boolean;
