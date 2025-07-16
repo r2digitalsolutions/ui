@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.13.3
+
+### Patch Changes
+
+- ba3b622: fix: button derived
+- 197cef3: fix: button hover cursor
+
 ## 0.13.2
 
 ### Patch Changes
