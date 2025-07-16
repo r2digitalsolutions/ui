@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.13.2
+
+### Patch Changes
+
+- 2f8b783: fix: button onclick
+
 ## 0.13.1
 
 ### Patch Changes
