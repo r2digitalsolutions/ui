@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Props } from './type';
+	import type { Props } from './type.js';
 
 	let { children, ...props }: Props = $props();
 </script>

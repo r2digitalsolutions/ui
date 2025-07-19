@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FileInputProps, Props } from './type.js';
+	import type { IFileInputProps, Props } from './type.js';
 
 	const { onchange, type = 'text', ...props }: Props = $props();
 </script>
@@ -16,7 +16,7 @@
 			const inputEl = e.currentTarget as HTMLInputElement;
 			const files = inputEl.files;
 
-			const fileValue = (props as FileInputProps).multiple
+			const fileValue = (props as IFileInputProps).multiple
 				? Array.from(files ?? [])
 				: (files?.[0] ?? null);
 
