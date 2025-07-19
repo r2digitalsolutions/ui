@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.15.2
+
+### Patch Changes
+
+- 92e7269: fix: input
+
 ## 0.15.1
 
 ### Patch Changes
