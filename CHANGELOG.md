@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.15.0
+
+### Minor Changes
+
+- 0b564b9: feat: add Input component
+
 ## 0.14.1
 
 ### Patch Changes
