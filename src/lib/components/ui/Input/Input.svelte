@@ -6,6 +6,7 @@
 
 <input
 	{...props}
+	{type}
 	onchange={(e) => {
 		const value = e.currentTarget.value;
 
@@ -25,5 +26,8 @@
 			(onchange as (value: string | null, e: Event) => void)?.(value || null, e);
 		}
 	}}
-	class="block w-full rounded-lg border border-gray-300 py-3 pr-3 pl-10 transition-colors focus:border-transparent focus:ring-2 focus:ring-purple-500"
+	class={[
+		'block w-full rounded-lg border border-gray-300 py-3 pr-3 pl-10 transition-colors focus:border-transparent focus:ring-2 focus:ring-purple-500',
+		props.class
+	]}
 />
