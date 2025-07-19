@@ -1,0 +1,1 @@
+export type IInputDirection = 'row' | 'row-reverse' | 'col' | 'col-reverse';

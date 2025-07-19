@@ -12,6 +12,8 @@ import Section from './ui/Section/Section.svelte';
 import Loading from './ui/Loading/Loading.svelte';
 import Button from './ui/Button/Button.svelte';
 import Heading from './ui/Heading/Heading.svelte';
+import Label from './ui/Label/Label.svelte';
+import Field from './ui/Field/Field.svelte';
 
 export {
   Alert,
@@ -24,8 +26,10 @@ export {
   CardContent,
   CardFooter,
   Container,
+  Field,
   Section,
   Loading,
   TableList,
   Heading,
+  Label,
 };
