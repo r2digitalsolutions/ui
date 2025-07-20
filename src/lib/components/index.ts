@@ -15,6 +15,7 @@ import Heading from './ui/Heading/Heading.svelte';
 import Label from './ui/Label/Label.svelte';
 import Field from './ui/Field/Field.svelte';
 import Input from './ui/Input/Input.svelte';
+import InputRadio from './ui/InputRadio/InputRadio.svelte';
 
 export {
   Alert,
@@ -33,5 +34,6 @@ export {
   TableList,
   Heading,
   Label,
-  Input
+  Input,
+  InputRadio,
 };
