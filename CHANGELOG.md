@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.17.0
+
+### Minor Changes
+
+- 4d40d01: feat: add textarea
+
 ## 0.16.0
 
 ### Minor Changes
