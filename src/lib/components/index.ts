@@ -17,6 +17,7 @@ import Field from './ui/Field/Field.svelte';
 import Input from './ui/Input/Input.svelte';
 import InputRadio from './ui/InputRadio/InputRadio.svelte';
 import Textarea from './ui/Textarea/Textarea.svelte';
+import Checkbox from './ui/Checkbox/Checkbox.svelte';
 
 export {
   Alert,
@@ -29,6 +30,7 @@ export {
   CardContent,
   CardFooter,
   Container,
+  Checkbox,
   Field,
   Section,
   Loading,
