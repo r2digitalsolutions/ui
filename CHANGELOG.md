@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.16.0
+
+### Minor Changes
+
+- 721b4bf: feat: add input radio
+
 ## 0.15.2
 
 ### Patch Changes
