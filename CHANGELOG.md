@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.0
+
+### Minor Changes
+
+- 58ceb3e: feat: add checkbox
+
 ## 0.17.0
 
 ### Minor Changes
