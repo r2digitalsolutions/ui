@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.1
+
+### Patch Changes
+
+- 9aac768: fix: button type
+
 ## 0.18.0
 
 ### Minor Changes
