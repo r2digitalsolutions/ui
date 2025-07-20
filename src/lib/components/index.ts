@@ -16,6 +16,7 @@ import Label from './ui/Label/Label.svelte';
 import Field from './ui/Field/Field.svelte';
 import Input from './ui/Input/Input.svelte';
 import InputRadio from './ui/InputRadio/InputRadio.svelte';
+import Textarea from './ui/Textarea/Textarea.svelte';
 
 export {
   Alert,
@@ -36,4 +37,5 @@ export {
   Label,
   Input,
   InputRadio,
+  Textarea,
 };
