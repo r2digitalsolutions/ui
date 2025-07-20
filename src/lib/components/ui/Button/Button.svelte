@@ -62,7 +62,7 @@
 	const Tag = $derived(props.href ? 'a' : 'button');
 </script>
 
-<svelte:element this={Tag} {...props} class={classes} disabled={disabled || isLoading}>
+<svelte:element this={Tag} {...props} {type} class={classes} disabled={disabled || isLoading}>
 	{#if isLoading}
 		<Loading />
 	{:else}
