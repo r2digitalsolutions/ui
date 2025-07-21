@@ -11,7 +11,7 @@
 	} = $props();
 </script>
 
-<div class={['flex justify-center gap-2', props.class]}>
-	<Loader class="h-6 w-6 animate-spin" />
+<div class={['flex items-center justify-center gap-2 text-sm', props.class]}>
+	<Loader class="h-4 w-4 animate-spin" />
 	<span> {loadingText} </span>
 </div>
