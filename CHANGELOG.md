@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.2
+
+### Patch Changes
+
+- 7e56c4b: fix: input styles
+
 ## 0.18.1
 
 ### Patch Changes
