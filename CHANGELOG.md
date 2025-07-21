@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.5
+
+### Patch Changes
+
+- e40d00d: fix: loading size icons
+
 ## 0.18.4
 
 ### Patch Changes
