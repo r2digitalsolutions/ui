@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.3
+
+### Patch Changes
+
+- e3926e1: fix: textarea styles
+
 ## 0.18.2
 
 ### Patch Changes
