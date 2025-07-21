@@ -27,7 +27,7 @@
 		}
 	}}
 	class={[
-		'block h-12 w-full rounded-lg border border-gray-300 py-3 font-normal transition-colors focus:border-transparent focus:ring-2 focus:ring-purple-500 dark:border-neutral-600 dark:bg-neutral-900 dark:focus:ring-offset-gray-800',
+		'block h-12 w-full rounded-lg border border-gray-300 py-3 font-normal transition-colors placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-900 dark:focus:ring-offset-gray-800',
 		props.class
 	]}
 />
