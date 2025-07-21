@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.4
+
+### Patch Changes
+
+- 44897f0: fix: class
+
 ## 0.18.3
 
 ### Patch Changes
