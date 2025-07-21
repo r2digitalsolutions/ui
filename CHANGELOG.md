@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.18.6
+
+### Patch Changes
+
+- 33cc686: chore: update versions
+
 ## 0.18.5
 
 ### Patch Changes
