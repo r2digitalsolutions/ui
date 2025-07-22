@@ -18,11 +18,13 @@ import Input from './ui/Input/Input.svelte';
 import InputRadio from './ui/InputRadio/InputRadio.svelte';
 import Textarea from './ui/Textarea/Textarea.svelte';
 import Checkbox from './ui/Checkbox/Checkbox.svelte';
+import Badge from './ui/Badge/Badge.svelte';
 
 export {
   Alert,
   Avatar,
   Button,
+  Badge,
   Card,
   CardHeader,
   CardTitle,
