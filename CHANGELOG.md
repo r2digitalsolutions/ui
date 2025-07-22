@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.19.0
+
+### Minor Changes
+
+- 15479f3: feat: add badge and readonly style
+
 ## 0.18.6
 
 ### Patch Changes
