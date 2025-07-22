@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.19.1
+
+### Patch Changes
+
+- c5fdda6: feat: add oninput type in textarea
+
 ## 0.19.0
 
 ### Minor Changes
