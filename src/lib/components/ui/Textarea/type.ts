@@ -2,6 +2,7 @@ import type { ClassValue } from "svelte/elements";
 
 export interface Props {
   onchange?: (value: string | null, e: Event) => void;
+  oninput?: (e: Event & { currentTarget: HTMLTextAreaElement }) => void;
   class?: ClassValue;
   rows?: number;
   cols?: number;
