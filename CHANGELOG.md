@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.21.1
+
+### Patch Changes
+
+- dc22594: fix: type input
+
 ## 0.21.0
 
 ### Minor Changes
