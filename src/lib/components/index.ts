@@ -19,8 +19,12 @@ import InputRadio from './ui/InputRadio/InputRadio.svelte';
 import Textarea from './ui/Textarea/Textarea.svelte';
 import Checkbox from './ui/Checkbox/Checkbox.svelte';
 import Badge from './ui/Badge/Badge.svelte';
+import NoContent from './ui/NoContent/NoContent.svelte';
+import Tag from './ui/Tag/Tag.svelte';
 
 export {
+  Tag,
+  NoContent,
   Alert,
   Avatar,
   Button,
