@@ -21,8 +21,20 @@ import Checkbox from './ui/Checkbox/Checkbox.svelte';
 import Badge from './ui/Badge/Badge.svelte';
 import NoContent from './ui/NoContent/NoContent.svelte';
 import Tag from './ui/Tag/Tag.svelte';
+import Dialog from './ui/Dialog/Dialog.svelte';
+import DialogHeader from './ui/Dialog/DialogHeader.svelte';
+import DialogTitle from './ui/Dialog/DialogTitle.svelte';
+import DialogDescription from './ui/Dialog/DialogDescription.svelte';
+import DialogContent from './ui/Dialog/DialogContent.svelte';
+import DialogFooter from './ui/Dialog/DialogFooter.svelte';
 
 export {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogContent,
+  DialogFooter,
   Tag,
   NoContent,
   Alert,
