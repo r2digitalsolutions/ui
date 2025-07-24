@@ -25,6 +25,7 @@ interface Base<TValue = unknown> {
   value?: TValue;
   onchange?: (value: TValue, e: Event) => void;
   onkeydown?: (e: KeyboardEvent) => void;
+  onkeypress?: (e: KeyboardEvent) => void;
   onkeyup?: (e: KeyboardEvent) => void;
   onclick?: (e: MouseEvent) => void;
   onfocus?: (e: FocusEvent) => void;
