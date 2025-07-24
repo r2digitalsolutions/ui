@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.21.0
+
+### Minor Changes
+
+- e8e8a22: feat: add new components
+
 ## 0.20.1
 
 ### Patch Changes
