@@ -29,6 +29,7 @@ interface Base<TValue = unknown> {
   onclick?: (e: MouseEvent) => void;
   onfocus?: (e: FocusEvent) => void;
   onblur?: (e: FocusEvent) => void;
+  oninput?: (e: Event & { currentTarget: HTMLInputElement }) => void;
 }
 
 export interface ITextInputProps extends Base<string | null> {
