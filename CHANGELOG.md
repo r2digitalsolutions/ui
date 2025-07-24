@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.21.2
+
+### Patch Changes
+
+- aba3454: fix: types
+
 ## 0.21.1
 
 ### Patch Changes
