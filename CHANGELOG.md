@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.21.3
+
+### Patch Changes
+
+- 645046f: fix: card
+
 ## 0.21.2
 
 ### Patch Changes
