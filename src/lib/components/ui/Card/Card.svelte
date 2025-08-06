@@ -18,12 +18,12 @@
 	]}
 >
 	{#if header}
-		<header class="flex flex-row gap-2 p-6 pb-2">
+		<header class="flex flex-row p-6 pb-2">
 			{@render header()}
 		</header>
 	{/if}
 
-	<section class={['flex flex-1 flex-col gap-2', props.body_class]}>
+	<section class={['flex flex-1 flex-col', props.body_class]}>
 		{@render children()}
 	</section>
 
