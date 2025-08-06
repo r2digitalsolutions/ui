@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { Props } from './type.js';
+	import CardFooter from './CardFooter.svelte';
+	import CardHeader from './CardHeader.svelte';
 
-	const { children, footer, header, onclick, ...props }: Props = $props();
+	const { children, footer, header, onclick, body_class, ...props }: Props = $props();
 </script>
 
 <svelte:element
@@ -18,20 +20,18 @@
 	]}
 >
 	{#if header}
-		<header class="flex flex-row p-6 pb-2">
+		<CardHeader>
 			{@render header()}
-		</header>
+		</CardHeader>
 	{/if}
 
-	<section class={['flex flex-1 flex-col', props.body_class]}>
+	<section class={['flex flex-1 flex-col', body_class]}>
 		{@render children()}
 	</section>
 
 	{#if footer}
-		<footer
-			class="flex justify-between rounded-b-xl border-t border-gray-200 bg-gray-50 p-3 pt-2 dark:border-neutral-700 dark:bg-neutral-800"
-		>
+		<CardFooter>
 			{@render footer()}
-		</footer>
+		</CardFooter>
 	{/if}
 </svelte:element>
