@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.3
+
+### Patch Changes
+
+- 6186da0: fix: components
+
 ## 0.22.2
 
 ### Patch Changes
