@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.2
+
+### Patch Changes
+
+- 9d556c9: fix: testing
+
 ## 0.22.1
 
 ### Patch Changes
