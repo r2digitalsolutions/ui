@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.6
+
+### Patch Changes
+
+- 94da5b0: fix: border color datatable
+
 ## 0.22.5
 
 ### Patch Changes
