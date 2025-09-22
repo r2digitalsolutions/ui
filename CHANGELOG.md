@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.5
+
+### Patch Changes
+
+- 6983645: fix: entry type
+
 ## 0.22.4
 
 ### Patch Changes
