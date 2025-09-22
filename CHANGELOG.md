@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.0
+
+### Minor Changes
+
+- 35b3aaf: feat: add new Datatable
+
 ## 0.21.4
 
 ### Patch Changes
