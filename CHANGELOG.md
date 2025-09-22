@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.1
+
+### Patch Changes
+
+- 28a2a5b: fix: node-version
+
 ## 0.22.0
 
 ### Minor Changes
