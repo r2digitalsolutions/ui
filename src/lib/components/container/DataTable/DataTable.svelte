@@ -2,11 +2,11 @@
 	import type { Snippet } from 'svelte';
 	import { tick } from 'svelte';
 	import type {
+		TContextMenuEntry,
 		TDataTableCellContext,
 		TDataTableColumnDef,
 		TDataTableTableOptions
 	} from './core/types.js';
-	import type { TContextMenuEntry } from './components/ContextMenu.svelte';
 	import type { FilterField } from './core/filters/types.js';
 	import { DataTableManager } from './core/DataTableManager.svelte';
 	import FilterPanel from './components/FilterPanel.svelte';
@@ -259,7 +259,7 @@
 								{#if manager.state.hiddenColumns.length > 0}
 									{#if expandIconPosition === 'start'}
 										<button
-											class="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+											class="cursor-pointer rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
 											title={manager.isExpanded(rowId(row)) ? 'Ocultar detalles' : 'Ver detalles'}
 											onclick={() => manager.toggleExpand(rowId(row))}
 										>
@@ -300,7 +300,7 @@
 								<div class="inline-flex items-center gap-2">
 									{#if expandIconPosition === 'end' && manager.state.hiddenColumns.length > 0}
 										<button
-											class="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+											class="cursor-pointer rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
 											title={manager.isExpanded(rowId(row)) ? 'Ocultar detalles' : 'Ver detalles'}
 											onclick={() => manager.toggleExpand(rowId(row))}
 										>
@@ -328,7 +328,6 @@
 							</div>
 						{/if}
 
-						<!-- COLLAPSE: fila nueva de ancho completo (evita solapes) -->
 						{#if manager.isExpanded(rowId(row))}
 							<div class="col-span-full px-3 pt-1 pb-3">
 								<div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -336,7 +335,7 @@
 										{#key hid}
 											{@const col = manager.columns.find((cc) => cc.id === hid)}
 											{#if col}
-												<div class="rounded-xl border p-3 dark:border-gray-800">
+												<div class="rounded-xl border border-gray-200 p-3 dark:border-gray-800">
 													<div class="mb-1 text-[11px] tracking-wide uppercase opacity-60">
 														{col.responsiveLabel ?? col.header}
 													</div>
