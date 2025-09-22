@@ -1,7 +1,7 @@
 export type TDataTableRowId = string | number;
 export type TDataTableSortDir = 'asc' | 'desc' | null;
 export type TDataTableColumnKey<T> = Extract<keyof T, string>;
-export type Accessor<T, R = any> = (row: T) => R;
+export type TDataTableAccessor<T, R = any> = (row: T) => R;
 
 export type TDataTableColumnType =
   | 'text'
@@ -41,7 +41,7 @@ export type TDataTableKeyColumn<T, K extends TDataTableColumnKey<T> = TDataTable
 /** Columna virtual (id libre), requiere accessor explícito */
 export type TDataTableVirtualColumn<T> = TDataTableBaseColumn<T> & {
   id: string; // no restringido a keyof T
-  accessor: Accessor<T>; // requerido si no es key real
+  accessor: TDataTableAccessor<T>; // requerido si no es key real
   renderCell?: (row: T) => any;
   renderCollapsed?: (row: T) => any;
 };
@@ -117,4 +117,14 @@ export type TDataTableCellContext<T> = {
   column: TDataTableColumnDef<T> | null;
   columnIndex: number | null;
   event: MouseEvent;
+};
+
+export type TContextMenuEntry = {
+  id: string;
+  label?: string;
+  shortcut?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  children?: TContextMenuEntry[];
+  kind?: 'item' | 'divider' | 'label';
 };

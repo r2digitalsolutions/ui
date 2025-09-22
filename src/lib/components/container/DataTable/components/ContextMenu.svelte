@@ -1,18 +1,8 @@
-<script module lang="ts">
-	export type Entry = {
-		id: string;
-		label?: string;
-		shortcut?: string;
-		onClick?: () => void;
-		disabled?: boolean;
-		children?: Entry[];
-		kind?: 'item' | 'divider' | 'label';
-	};
-</script>
-
 <script lang="ts">
+	import type { TContextMenuEntry } from '../core/types.js';
+
 	type Props = {
-		items?: Entry[];
+		items?: TContextMenuEntry[];
 		x?: number;
 		y?: number;
 		open?: boolean;
@@ -30,7 +20,7 @@
 		context = null
 	}: Props = $props();
 
-	let stack = $state<{ label: string; items: Entry[] }[]>([]);
+	let stack = $state<{ label: string; items: TContextMenuEntry[] }[]>([]);
 	let q = $state('');
 
 	const current = $derived(stack.length ? stack[stack.length - 1] : { label: title, items });
@@ -41,11 +31,11 @@
 		q = '';
 	}
 
-	function hasChildren(it: Entry) {
+	function hasChildren(it: TContextMenuEntry) {
 		return !!(it.children && it.children.length);
 	}
 
-	function clickItem(it: Entry) {
+	function clickItem(it: TContextMenuEntry) {
 		if (it.disabled) return;
 		if (hasChildren(it)) {
 			stack.push({ label: it.label ?? '', items: it.children! });
@@ -58,7 +48,7 @@
 		}
 	}
 
-	function matches(it: Entry, query: string): boolean {
+	function matches(it: TContextMenuEntry, query: string): boolean {
 		if (it.kind === 'divider') return true;
 		const lbl = (it.label ?? '').toLowerCase();
 		if (lbl.includes(query)) return true;
@@ -72,7 +62,7 @@
 		let arr = query ? list.filter((it) => matches(it, query)) : list.slice();
 
 		// limpiar divisores (sin duplicados, ni al principio/fin)
-		const out: Entry[] = [];
+		const out: TContextMenuEntry[] = [];
 		let prevDiv = false;
 		for (const it of arr) {
 			if (it.kind === 'divider') {

@@ -6,7 +6,7 @@
 		TDataTableColumnDef,
 		TDataTableTableOptions
 	} from './core/types.js';
-	import type { Entry } from './components/ContextMenu.svelte';
+	import type { TContextMenuEntry } from './components/ContextMenu.svelte';
 	import type { FilterField } from './core/filters/types.js';
 	import { DataTableManager } from './core/DataTableManager.svelte';
 	import FilterPanel from './components/FilterPanel.svelte';
@@ -20,7 +20,7 @@
 		filters?: Snippet;
 		options: TDataTableTableOptions<T>;
 		rowId?: (row: T) => any;
-		actions?: (rows: T[], ctx?: TDataTableCellContext<T> | null) => Entry[];
+		actions?: (rows: T[], ctx?: TDataTableCellContext<T> | null) => TContextMenuEntry[];
 		rowActions?: (row: T) => any;
 		onRowClick?: (row: T) => void;
 		density?: 'compact' | 'normal' | 'comfortable';
