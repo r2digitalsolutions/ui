@@ -1,15 +1,15 @@
 import { SvelteSet } from 'svelte/reactivity';
 import type {
-  TableOptions,
-  TableState,
-  VisibilityPlan,
-  FetchParams,
-  FetchResult
+  TDataTableTableOptions,
+  TDataTableTableState,
+  TDataTableVisibilityPlan,
+  TDataTableFetchParams,
+  TDataTableFetchResult
 } from './types.js';
 import { normalize, defaultAccessor, compareValues, applyFilterOp } from './utils.js';
 
 export class DataTableManager<T extends { id?: any } = any> {
-  options: TableOptions<T> = $state({
+  options: TDataTableTableOptions<T> = $state({
     perPage: 10,
     perPageOptions: [10, 20, 50, 100],
     multiSelect: true,
@@ -17,7 +17,7 @@ export class DataTableManager<T extends { id?: any } = any> {
     loadMode: 'local',
     data: [],
   });
-  state: TableState<T> = $state({
+  state: TDataTableTableState<T> = $state({
     ready: false,
     items: [],
     page: 1,
@@ -40,7 +40,7 @@ export class DataTableManager<T extends { id?: any } = any> {
   expanded: SvelteSet<any> = new SvelteSet();
   lastWidth: number | null = $state<number | null>(null);
 
-  constructor(opts: TableOptions<T>) {
+  constructor(opts: TDataTableTableOptions<T>) {
     const columns = normalize(opts.columns);
 
     this.options = ({
@@ -88,7 +88,7 @@ export class DataTableManager<T extends { id?: any } = any> {
   }
 
 
-  visibilityPlan(containerWidth: number): VisibilityPlan {
+  visibilityPlan(containerWidth: number): TDataTableVisibilityPlan {
     const available = Math.max(0, Math.floor(containerWidth) - (this.reservedWidth ?? 0));
     const cols = this.columns;
     const origOrder = cols.map((c) => c.id);
@@ -150,7 +150,7 @@ export class DataTableManager<T extends { id?: any } = any> {
     return { visible: finalVisible, hidden: finalHidden };
   }
 
-  private mergeWithOverrides(plan: VisibilityPlan): VisibilityPlan {
+  private mergeWithOverrides(plan: TDataTableVisibilityPlan): TDataTableVisibilityPlan {
     const vis = new Set(plan.visible);
     const hid = new Set(plan.hidden);
 
@@ -160,7 +160,7 @@ export class DataTableManager<T extends { id?: any } = any> {
     return { visible: [...vis], hidden: [...hid] };
   }
 
-  applyVisibility(plan: VisibilityPlan) {
+  applyVisibility(plan: TDataTableVisibilityPlan) {
     this.state.visibleColumns = plan.visible;
     this.state.hiddenColumns = plan.hidden;
   }
@@ -209,7 +209,7 @@ export class DataTableManager<T extends { id?: any } = any> {
     const { fetcher } = this.options;
     if (!fetcher) throw new Error('fetcher requerido para modo remoto/cursor');
 
-    const params: FetchParams = {
+    const params: TDataTableFetchParams = {
       page: this.state.page,
       perPage: this.state.perPage,
       cursor: this.state.cursor,
@@ -218,7 +218,7 @@ export class DataTableManager<T extends { id?: any } = any> {
       filters: this.state.filters
     };
 
-    const res: FetchResult<T> = await fetcher(params);
+    const res: TDataTableFetchResult<T> = await fetcher(params);
     this.state.items = res.items;
     this.state.total = res.total;
     this.state.cursor = res.nextCursor;

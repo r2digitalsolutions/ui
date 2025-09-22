@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { FilterDef } from '../core/types.js';
+	import type { TDataTableFilterDef } from '../core/types.js';
 
 	interface Props {
-		filters: FilterDef<any>[];
-		onapply: (filters: FilterDef<any>[]) => void;
+		filters: TDataTableFilterDef<any>[];
+		onapply: (filters: TDataTableFilterDef<any>[]) => void;
 	}
 
 	const { filters, onapply }: Props = $props();
@@ -12,7 +12,7 @@
 
 	function submit() {
 		const base = filters.filter((f) => f.meta?.kind !== 'quick');
-		const q: FilterDef<any> = {
+		const q: TDataTableFilterDef<any> = {
 			id: 'q',
 			label: 'Búsqueda',
 			op: 'contains',

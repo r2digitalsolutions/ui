@@ -1,9 +1,9 @@
-export type RowId = string | number;
-export type SortDir = 'asc' | 'desc' | null;
-export type ColumnKey<T> = Extract<keyof T, string>;
+export type TDataTableRowId = string | number;
+export type TDataTableSortDir = 'asc' | 'desc' | null;
+export type TDataTableColumnKey<T> = Extract<keyof T, string>;
 export type Accessor<T, R = any> = (row: T) => R;
 
-export type ColumnType =
+export type TDataTableColumnType =
   | 'text'
   | 'number'
   | 'currency'
@@ -14,7 +14,7 @@ export type ColumnType =
   | 'link'
   | 'code';
 
-type BaseColumn<T> = {
+type TDataTableBaseColumn<T> = {
   header: string;
   width?: number;
   minWidth?: number;
@@ -24,14 +24,14 @@ type BaseColumn<T> = {
   hideOnMobile?: boolean;
   responsiveLabel?: string;
   class?: string;
-  type?: ColumnType;
+  type?: TDataTableColumnType;
   format?: Intl.NumberFormatOptions | Intl.DateTimeFormatOptions;
   trueLabel?: string;   // para boolean
   falseLabel?: string;  // para boolean
 };
 
 /** Columna ligada a una key existente de T (autocomplete de keys) */
-export type KeyColumn<T, K extends ColumnKey<T> = ColumnKey<T>> = BaseColumn<T> & {
+export type TDataTableKeyColumn<T, K extends TDataTableColumnKey<T> = TDataTableColumnKey<T>> = TDataTableBaseColumn<T> & {
   id: K;
   accessor?: (row: T) => T[K];
   renderCell?: (row: T) => any;
@@ -39,15 +39,15 @@ export type KeyColumn<T, K extends ColumnKey<T> = ColumnKey<T>> = BaseColumn<T> 
 };
 
 /** Columna virtual (id libre), requiere accessor explícito */
-export type VirtualColumn<T> = BaseColumn<T> & {
+export type TDataTableVirtualColumn<T> = TDataTableBaseColumn<T> & {
   id: string; // no restringido a keyof T
   accessor: Accessor<T>; // requerido si no es key real
   renderCell?: (row: T) => any;
   renderCollapsed?: (row: T) => any;
 };
 
-export type ColumnDef<T> = KeyColumn<T>
-export type FilterOp =
+export type TDataTableColumnDef<T> = TDataTableKeyColumn<T>
+export type TDataTableFilterOp =
   | 'equals'
   | 'not_equals'
   | 'contains'
@@ -61,39 +61,39 @@ export type FilterOp =
   | 'not_in'
   | 'is_empty'
   | 'is_not_empty';
-export type FilterDef<T> = {
+export type TDataTableFilterDef<T> = {
   id: string;
   label: string;
   columnId?: string;
-  op: FilterOp;
+  op: TDataTableFilterOp;
   value?: any;
   meta?: Record<string, any>;
 };
-export type FetchResult<T> = { items: T[]; total: number; nextCursor?: string };
-export type FetchParams = {
+export type TDataTableFetchResult<T> = { items: T[]; total: number; nextCursor?: string };
+export type TDataTableFetchParams = {
   page: number;
   perPage: number;
   cursor?: string;
   sortBy?: string | null;
-  sortDir?: SortDir;
-  filters: FilterDef<any>[];
+  sortDir?: TDataTableSortDir;
+  filters: TDataTableFilterDef<any>[];
 };
-export type LoadMode = 'local' | 'remote' | 'cursor';
-export type TableOptions<T> = {
+export type TDataTableLoadMode = 'local' | 'remote' | 'cursor';
+export type TDataTableTableOptions<T> = {
   id?: string;
-  columns: ColumnDef<T>[];
-  loadMode: LoadMode;
+  columns: TDataTableColumnDef<T>[];
+  loadMode: TDataTableLoadMode;
   data?: T[];
-  fetcher?: (params: FetchParams) => Promise<FetchResult<T>>;
+  fetcher?: (params: TDataTableFetchParams) => Promise<TDataTableFetchResult<T>>;
   perPage?: number;
   perPageOptions?: number[];
   multiSelect?: boolean;
   keepSelectionOnPageChange?: boolean;
   initialSortBy?: string | null;
-  initialSortDir?: SortDir;
-  initialFilters?: FilterDef<T>[];
+  initialSortDir?: TDataTableSortDir;
+  initialFilters?: TDataTableFilterDef<T>[];
 };
-export type TableState<T> = {
+export type TDataTableTableState<T> = {
   ready: boolean;
   items: T[];
   page: number;
@@ -101,20 +101,20 @@ export type TableState<T> = {
   total: number;
   cursor?: string;
   sortBy: string | null;
-  sortDir: SortDir;
-  filters: FilterDef<T>[];
+  sortDir: TDataTableSortDir;
+  filters: TDataTableFilterDef<T>[];
   visibleColumns: string[];
   hiddenColumns: string[];
-  selected: Set<RowId>;
+  selected: Set<TDataTableRowId>;
   loading: boolean;
   error?: string;
 };
-export type VisibilityPlan = { visible: string[]; hidden: string[] };
-export type CellContext<T> = {
+export type TDataTableVisibilityPlan = { visible: string[]; hidden: string[] };
+export type TDataTableCellContext<T> = {
   row: T | null;
   rowIndex: number | null;
   columnId: string | null;
-  column: ColumnDef<T> | null;
+  column: TDataTableColumnDef<T> | null;
   columnIndex: number | null;
   event: MouseEvent;
 };

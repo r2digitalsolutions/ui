@@ -1,8 +1,8 @@
-import type { FilterDef } from "../types.js";
+import type { TDataTableFilterDef } from "../types.js";
 import type { FilterField } from "./types.js";
 
-export function buildFilterDefs<T>(fields: FilterField<T>[], values: Record<string, any>): FilterDef<T>[] {
-  const defs: FilterDef<T>[] = [];
+export function buildFilterDefs<T>(fields: FilterField<T>[], values: Record<string, any>): TDataTableFilterDef<T>[] {
+  const defs: TDataTableFilterDef<T>[] = [];
   for (const f of fields) {
     const v = values[f.id];
     if (v == null || v === '' || (Array.isArray(v) && v.length === 0)) continue;

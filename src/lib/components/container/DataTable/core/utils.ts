@@ -1,5 +1,5 @@
-import type { ColumnDef, FilterOp } from './types.js';
-export function normalize<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
+import type { TDataTableColumnDef, TDataTableFilterOp } from './types.js';
+export function normalize<T>(columns: TDataTableColumnDef<T>[]): TDataTableColumnDef<T>[] {
   return columns.map((c, i) => ({
     width: 160,
     minWidth: 96,
@@ -21,7 +21,7 @@ export function compareValues(a: any, b: any): number {
   if (a < b) return -1;
   return 0;
 }
-export function applyFilterOp(value: any, op: FilterOp, target: any): boolean {
+export function applyFilterOp(value: any, op: TDataTableFilterOp, target: any): boolean {
   switch (op) {
     case 'equals':
       return value === target;

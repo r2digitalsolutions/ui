@@ -1,9 +1,9 @@
 <script lang="ts" generics="T">
-	import type { ColumnDef } from '../core/types.js';
+	import type { TDataTableColumnDef } from '../core/types.js';
 	import { Check, X, ExternalLink } from 'lucide-svelte';
 
 	interface Props<T> {
-		column: ColumnDef<T>;
+		column: TDataTableColumnDef<T>;
 		row: T;
 		measuring?: boolean;
 	}

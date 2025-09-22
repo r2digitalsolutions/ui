@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { ColumnDef } from '../core/types.js';
+	import type { TDataTableColumnDef } from '../core/types.js';
 
 	interface Props {
-		columns?: ColumnDef<any>[];
+		columns?: TDataTableColumnDef<any>[];
 		visible?: string[];
 		onToggle: (id: string, show: boolean) => void;
 		buttonText?: string;

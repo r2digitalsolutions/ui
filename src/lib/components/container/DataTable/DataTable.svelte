@@ -1,12 +1,11 @@
-<script module lang="ts">
-	import * as DataTableTypes from './core/types.js';
-	export type { DataTableTypes };
-</script>
-
 <script lang="ts" generics="T extends { id?: any }">
 	import type { Snippet } from 'svelte';
 	import { tick } from 'svelte';
-	import type { CellContext, ColumnDef, TableOptions } from './core/types.js';
+	import type {
+		TDataTableCellContext,
+		TDataTableColumnDef,
+		TDataTableTableOptions
+	} from './core/types.js';
 	import type { Entry } from './components/ContextMenu.svelte';
 	import type { FilterField } from './core/filters/types.js';
 	import { DataTableManager } from './core/DataTableManager.svelte';
@@ -19,9 +18,9 @@
 
 	interface Props<T> {
 		filters?: Snippet;
-		options: TableOptions<T>;
+		options: TDataTableTableOptions<T>;
 		rowId?: (row: T) => any;
-		actions?: (rows: T[], ctx?: CellContext<T> | null) => Entry[];
+		actions?: (rows: T[], ctx?: TDataTableCellContext<T> | null) => Entry[];
 		rowActions?: (row: T) => any;
 		onRowClick?: (row: T) => void;
 		density?: 'compact' | 'normal' | 'comfortable';
@@ -54,7 +53,7 @@
 	let filterValues = $state<Record<string, any>>({});
 	let container: HTMLDivElement | null = $state(null);
 	let rightMenu = $state<{ open: boolean; x: number; y: number }>({ open: false, x: 0, y: 0 });
-	let rightClickContext = $state<CellContext<T> | null>(null);
+	let rightClickContext = $state<TDataTableCellContext<T> | null>(null);
 	let measuring = $state(true);
 
 	const sizeRow = $derived.by(() =>
@@ -112,7 +111,7 @@
 		measureColumns();
 	});
 
-	function headerClick(c: ColumnDef<T>) {
+	function headerClick(c: TDataTableColumnDef<T>) {
 		if (!c.sortable) return;
 		manager.setSort(c.id);
 	}
@@ -133,7 +132,7 @@
 			columnIndex,
 			event: e,
 			column: columnId ? manager.getColumn(columnId) : null
-		} as CellContext<T>;
+		} as TDataTableCellContext<T>;
 	}
 
 	function selectedRows(): T[] {
