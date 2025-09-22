@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FilterDef } from '../core/types';
+	import type { FilterDef } from '../core/types.js';
 
 	interface Props {
 		filters: FilterDef<any>[];

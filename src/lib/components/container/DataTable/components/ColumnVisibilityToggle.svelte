@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ColumnDef } from '../core/types';
+	import type { ColumnDef } from '../core/types.js';
 
 	interface Props {
 		columns?: ColumnDef<any>[];

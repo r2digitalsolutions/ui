@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Input from '@UI/Input/Input.svelte';
-	import type { FilterField } from '../core/filters/types';
-	import { buildFilterDefs } from '../core/filters/utils';
-	import Checkbox from '@UI/Checkbox/Checkbox.svelte';
-	import Button from '@UI/buttons/Button.svelte';
 	import { Check, X } from 'lucide-svelte';
+	import type { FilterField } from '../core/filters/types.js';
+	import { buildFilterDefs } from '../core/filters/utils.js';
+	import Input from '$lib/components/ui/Input/Input.svelte';
+	import Checkbox from '$lib/components/ui/Checkbox/Checkbox.svelte';
+	import Button from '$lib/components/ui/Button/Button.svelte';
 
 	interface Props {
 		fields: FilterField<any>[];
@@ -90,16 +90,16 @@
 			<div class="space-y-3">
 				{#each fields as f}
 					{#if f.type === 'text'}
+						<label class="mb-1 block text-xs opacity-70">{f.label}</label>
 						<Input
-							label={f.label}
 							type="text"
 							placeholder={f.placeholder}
 							value={values[f.id]}
 							onchange={(e) => (values[f.id] = e)}
 						/>
 					{:else if f.type === 'number'}
+						<label class="mb-1 block text-xs opacity-70">{f.label}</label>
 						<Input
-							label={f.label}
 							type="number"
 							min={f.min}
 							max={f.max}
@@ -108,12 +108,8 @@
 							onchange={(e) => (values[f.id] = e)}
 						/>
 					{:else if f.type === 'date'}
-						<Input
-							label={f.label}
-							type="date"
-							value={values[f.id]}
-							onchange={(e) => (values[f.id] = e)}
-						/>
+						<label class="mb-1 block text-xs opacity-70">{f.label}</label>
+						<Input type="date" value={values[f.id]} onchange={(e) => (values[f.id] = e)} />
 					{:else if f.type === 'checkbox'}
 						<Checkbox checked={values[f.id]} label={f.label} onchange={(e) => (values[f.id] = e)} />
 					{:else if f.type === 'select'}

@@ -52,7 +52,7 @@
 	const manager = new DataTableManager<T>(options);
 
 	let filterValues = $state<Record<string, any>>({});
-	let container: renderDivElement | null = $state(null);
+	let container: HTMLDivElement | null = $state(null);
 	let rightMenu = $state<{ open: boolean; x: number; y: number }>({ open: false, x: 0, y: 0 });
 	let rightClickContext = $state<CellContext<T> | null>(null);
 	let measuring = $state(true);
@@ -90,11 +90,11 @@
 		if (!container) return;
 		const widths: Record<string, number> = {};
 		for (const c of manager.columns) {
-			const head = container.querySelector(`[data-dt-head="${c.id}"]`) as renderElement | null;
+			const head = container.querySelector(`[data-dt-head="${c.id}"]`) as HTMLElement | null;
 			let maxW = head ? head.offsetWidth : 0;
 			const cells = Array.from(
 				container.querySelectorAll(`[data-dt-cell="1"][data-col-id="${c.id}"]`)
-			).slice(0, SAMPLE_ROWS) as renderElement[];
+			).slice(0, SAMPLE_ROWS) as HTMLElement[];
 			for (const el of cells) maxW = Math.max(maxW, el.offsetWidth);
 			if (c.minWidth != null) maxW = Math.max(maxW, c.minWidth);
 			if (c.width != null) maxW = Math.max(maxW, c.width);
@@ -197,7 +197,7 @@
 					checked={manager.state.items.length > 0 &&
 						manager.state.items.every((r) => manager.state.selected.has(rowId(r)))}
 					onclick={(e) =>
-						(e.currentTarget as renderInputElement).checked
+						(e.currentTarget as HTMLInputElement).checked
 							? manager.selectAllCurrentPage(rowId)
 							: manager.clearSelection()}
 				/>

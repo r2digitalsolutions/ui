@@ -1,5 +1,5 @@
 <script lang="ts" generics="T">
-	import type { ColumnDef } from '../core/types';
+	import type { ColumnDef } from '../core/types.js';
 	import { Check, X, ExternalLink } from 'lucide-svelte';
 
 	interface Props<T> {
