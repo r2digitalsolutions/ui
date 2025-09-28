@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.22.7
+
+### Patch Changes
+
+- 4df9b81: fix: lint
+
 ## 0.22.6
 
 ### Patch Changes
