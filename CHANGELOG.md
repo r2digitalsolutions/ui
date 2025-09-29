@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.23.0
+
+### Minor Changes
+
+- b7a2daf: feat: add tabsStepper componente
+
 ## 0.22.7
 
 ### Patch Changes
