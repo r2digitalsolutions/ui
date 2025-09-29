@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.24.0
+
+### Minor Changes
+
+- 05f2567: feat: add selector
+
 ## 0.23.0
 
 ### Minor Changes
