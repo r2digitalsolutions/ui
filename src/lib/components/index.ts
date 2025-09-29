@@ -27,8 +27,10 @@ import DialogTitle from './ui/Dialog/DialogTitle.svelte';
 import DialogDescription from './ui/Dialog/DialogDescription.svelte';
 import DialogContent from './ui/Dialog/DialogContent.svelte';
 import DialogFooter from './ui/Dialog/DialogFooter.svelte';
+import Selector from './ui/Selector/Selector.svelte';
 
 export {
+  Selector,
   Dialog,
   DialogHeader,
   DialogTitle,
