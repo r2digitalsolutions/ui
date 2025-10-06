@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.24.7
+
+### Patch Changes
+
+- 4d4f340: fix
+
 ## 0.24.6
 
 ### Patch Changes
