@@ -1,6 +1,36 @@
 <script lang="ts">
 	import type { TContextMenuEntry } from '../core/types.js';
 
+	// --- Action portal ---
+	function portal(node: HTMLElement, target: HTMLElement | null = null) {
+		const tgt = target ?? document.body;
+		const placeholder = document.createComment('portal-placeholder');
+		if (!node.parentNode) return { destroy: () => {} };
+		node.parentNode.insertBefore(placeholder, node);
+		tgt.appendChild(node);
+		return {
+			destroy() {
+				if (node.isConnected) node.remove();
+				if (placeholder.isConnected && placeholder.parentNode) {
+					placeholder.parentNode.insertBefore(node, placeholder);
+					placeholder.remove();
+				}
+			}
+		};
+	}
+
+	// --- Util para clamping a viewport ---
+	function clampToViewport(x: number, y: number, menuW: number, menuH: number, padding = 8) {
+		const vw = document.documentElement.clientWidth;
+		const vh = document.documentElement.clientHeight;
+		let nx = x;
+		let ny = y;
+		if (nx + menuW + padding > vw) nx = Math.max(padding, vw - menuW - padding);
+		if (ny + menuH + padding > vh) ny = Math.max(padding, vh - menuH - padding);
+		return { x: nx, y: ny };
+	}
+
+	// --- Props ---
 	type Props = {
 		items?: TContextMenuEntry[];
 		x?: number;
@@ -9,6 +39,7 @@
 		title?: string;
 		searchable?: boolean;
 		context?: any;
+		portalTarget?: HTMLElement | null;
 	};
 	let {
 		items = [],
@@ -17,9 +48,11 @@
 		open = $bindable(false),
 		title = '',
 		searchable = true,
-		context = null
+		context = null,
+		portalTarget = null
 	}: Props = $props();
 
+	// --- Estado interno ---
 	let stack = $state<{ label: string; items: TContextMenuEntry[] }[]>([]);
 	let q = $state('');
 	const current = $derived(stack.length ? stack[stack.length - 1] : { label: title, items });
@@ -27,7 +60,6 @@
 	let menuEl: HTMLDivElement | null = $state(null);
 
 	function close() {
-		if (menuEl) menuEl.hidePopover();
 		open = false;
 		stack = [];
 		q = '';
@@ -96,54 +128,89 @@
 		}
 	}
 
-	// Manage popover open/close
+	// Teclado (Escape / Backspace)
 	$effect(() => {
-		if (!menuEl) return;
-		if (open) {
-			menuEl.style.setProperty('--popover-x', `${x}px`);
-			menuEl.style.setProperty('--popover-y', `${y}px`);
-			menuEl.showPopover();
-		} else {
-			menuEl.hidePopover();
-		}
+		if (!open) return;
+		const handler = (e: KeyboardEvent) => onKey(e);
+		document.addEventListener('keydown', handler);
+		return () => document.removeEventListener('keydown', handler);
 	});
 
-	// Clamp position to viewport
+	// Cierres robustos: click-fuera, scroll/resize, y bloqueo de menú nativo
+	$effect(() => {
+		if (!open || !menuEl) return;
+
+		const onPointerDown = (ev: PointerEvent) => {
+			if (!menuEl || menuEl.contains(ev.target as Node)) return;
+			close();
+		};
+
+		const onNativeCtx = (ev: MouseEvent) => {
+			if (!menuEl || menuEl.contains(ev.target as Node)) return;
+			ev.preventDefault();
+		};
+
+		let timeout: NodeJS.Timeout;
+		const onScrollOrResize = () => {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => close(), 100);
+		};
+
+		document.addEventListener('pointerdown', onPointerDown);
+		document.addEventListener('contextmenu', onNativeCtx);
+		window.addEventListener('scroll', onScrollOrResize, true);
+		window.addEventListener('resize', onScrollOrResize, true);
+
+		return () => {
+			clearTimeout(timeout);
+			document.removeEventListener('pointerdown', onPointerDown);
+			document.removeEventListener('contextmenu', onNativeCtx);
+			window.removeEventListener('scroll', onScrollOrResize, true);
+			window.removeEventListener('resize', onScrollOrResize, true);
+		};
+	});
+
+	// Clamp de posición tras abrir o cambiar coords
 	$effect(() => {
 		if (!open || !menuEl) return;
 		requestAnimationFrame(() => {
 			if (!menuEl) return;
 			const rect = menuEl.getBoundingClientRect();
-			const vw = document.documentElement.clientWidth;
-			const vh = document.documentElement.clientHeight;
-			let nx = x;
-			let ny = y;
-			const padding = 8;
-			if (nx + rect.width + padding > vw) nx = Math.max(padding, vw - rect.width - padding);
-			if (ny + rect.height + padding > vh) ny = Math.max(padding, vh - rect.height - padding);
+			const { x: nx, y: ny } = clampToViewport(x, y, rect.width, rect.height, 8);
 			if (nx !== x || ny !== y) {
 				x = nx;
 				y = ny;
-				menuEl.style.setProperty('--popover-x', `${nx}px`);
-				menuEl.style.setProperty('--popover-y', `${ny}px`);
 			}
 		});
 	});
 </script>
 
 {#if open}
+	<!-- BACKDROP -->
+	<div
+		use:portal={portalTarget}
+		role="dialog"
+		class="fixed inset-0 z-[2147483646]"
+		onclick={() => close()}
+		oncontextmenu={(e) => e.preventDefault()}
+		aria-modal="true"
+		tabindex="0"
+		style="pointer-events:auto"
+	/>
+
+	<!-- MENÚ -->
 	<div
 		bind:this={menuEl}
-		popover="manual"
-		class="w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-gray-900"
-		style="position: fixed; left: var(--popover-x); top: var(--popover-y);"
+		use:portal={portalTarget}
+		class="fixed z-[2147483647] w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-gray-900"
+		style={`left:${x}px; top:${y}px`}
 		oncontextmenu={(e) => e.preventDefault()}
-		onkeydown={onKey}
 	>
 		<div class="flex items-center gap-1 px-1 py-1">
 			{#if stack.length > 0}
 				<button
 					class="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+					role="dialog"
 					aria-label="Atrás"
 					onclick={back}
 				>
@@ -155,10 +222,8 @@
 						stroke="currentColor"
 						stroke-width="2"
 						stroke-linecap="round"
-						stroke-linejoin="round"
+						stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg
 					>
-						<polyline points="15 18 9 12 15 6" />
-					</svg>
 				</button>
 			{/if}
 			<div class="min-w-0 flex-1 truncate px-1 text-xs font-medium opacity-70">
@@ -184,15 +249,16 @@
 				{:else}
 					<button
 						class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-800"
+						role="dialog"
 						disabled={it.disabled}
 						onclick={() => clickItem(it)}
 					>
 						<span class="truncate">{it.label}</span>
 						<span class="flex items-center gap-2">
 							{#if it.shortcut}
-								<kbd class="rounded bg-gray-100 px-1 text-[10px] dark:bg-gray-800">
-									{it.shortcut}
-								</kbd>
+								<kbd class="rounded bg-gray-100 px-1 text-[10px] dark:bg-gray-800"
+									>{it.shortcut}</kbd
+								>
 							{/if}
 							{#if hasChildren(it)}
 								<svg
@@ -204,10 +270,8 @@
 									stroke="currentColor"
 									stroke-width="2"
 									stroke-linecap="round"
-									stroke-linejoin="round"
+									stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg
 								>
-									<polyline points="9 18 15 12 9 6" />
-								</svg>
 							{/if}
 						</span>
 					</button>
@@ -216,12 +280,3 @@
 		</div>
 	</div>
 {/if}
-
-<style lang="postcss">
-	[popover] {
-		margin: 0;
-		border: none;
-		padding: 0;
-		z-index: 2147483647;
-	}
-</style>

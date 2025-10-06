@@ -124,7 +124,6 @@
 	) {
 		e.preventDefault();
 		const columnIndex = columnId ? manager.state.visibleColumns.indexOf(columnId) : null;
-		// Always set fresh coordinates and ensure menu is closed before reopening
 		if (rightMenu.open) {
 			rightMenu = { open: false, x: 0, y: 0 };
 			setTimeout(() => {
@@ -148,7 +147,6 @@
 		return manager.state.items.filter((r) => ids.has(rowId(r)));
 	}
 
-	// Tracks
 	function colTrack(cId: string, measuring: boolean) {
 		if (measuring) return 'max-content';
 		const c = manager.getColumn(cId);
@@ -291,7 +289,7 @@
 								data-dt-cell="1"
 								data-col-id={cid}
 								data-row-index={i}
-								class="px-3"
+								class="flex h-full w-full items-center px-3"
 								onclick={() => onRowClick?.(row)}
 								oncontextmenu={(e) => onCellContext(e, row, cid, i)}
 							>
