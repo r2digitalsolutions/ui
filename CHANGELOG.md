@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.24.2
+
+### Patch Changes
+
+- d8d80ec: fix:1
+
 ## 0.24.1
 
 ### Patch Changes
