@@ -124,15 +124,19 @@
 	) {
 		e.preventDefault();
 		const columnIndex = columnId ? manager.state.visibleColumns.indexOf(columnId) : null;
-		rightMenu = { open: true, x: e.clientX, y: e.clientY };
-		rightClickContext = {
-			row,
-			rowIndex,
-			columnId,
-			columnIndex,
-			event: e,
-			column: columnId ? manager.getColumn(columnId) : null
-		} as TDataTableCellContext<T>;
+		// Reset menu state and set new coordinates
+		rightMenu = { open: false, x: 0, y: 0 };
+		tick().then(() => {
+			rightMenu = { open: true, x: e.clientX, y: e.clientY };
+			rightClickContext = {
+				row,
+				rowIndex,
+				columnId,
+				columnIndex,
+				event: e,
+				column: columnId ? manager.getColumn(columnId) : null
+			} as TDataTableCellContext<T>;
+		});
 	}
 
 	function selectedRows(): T[] {

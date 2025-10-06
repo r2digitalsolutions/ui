@@ -5,14 +5,19 @@
 	function portal(node: HTMLElement, target: HTMLElement | null = null) {
 		const tgt = target ?? document.body;
 		const placeholder = document.createComment('portal-placeholder');
-		if (!node.parentNode) return { destroy: () => {} };
-		node.parentNode.insertBefore(placeholder, node);
+		if (node.parentNode) {
+			node.parentNode.insertBefore(placeholder, node);
+		}
+		// Remove any existing menu instances
+		const existingMenus = document.querySelectorAll('.context-menu-portal');
+		existingMenus.forEach((menu) => menu.remove());
+		// Add class for identification
+		node.classList.add('context-menu-portal');
 		tgt.appendChild(node);
 		return {
 			destroy() {
 				if (node.isConnected) node.remove();
 				if (placeholder.isConnected && placeholder.parentNode) {
-					placeholder.parentNode.insertBefore(node, placeholder);
 					placeholder.remove();
 				}
 			}
@@ -65,6 +70,12 @@
 		q = '';
 		x = 0;
 		y = 0;
+		if (menuEl) {
+			menuEl.style.left = '0px';
+			menuEl.style.top = '0px';
+			menuEl.remove();
+			menuEl = null;
+		}
 	}
 
 	function hasChildren(it: TContextMenuEntry) {
@@ -170,42 +181,21 @@
 		};
 	});
 
-	// Clamp de posición tras abrir o cambiar coords
+	// Aplicar posición tras abrir o cambiar coords
 	$effect(() => {
 		if (!open || !menuEl) return;
-		requestAnimationFrame(() => {
-			if (!menuEl) return;
-			const rect = menuEl.getBoundingClientRect();
-			const { x: nx, y: ny } = clampToViewport(x, y, rect.width, rect.height, 8);
-			if (nx !== x || ny !== y) {
-				x = nx;
-				y = ny;
-				menuEl.style.left = `${nx}px`;
-				menuEl.style.top = `${ny}px`;
-			}
-		});
+		const rect = menuEl.getBoundingClientRect();
+		const { x: nx, y: ny } = clampToViewport(x, y, rect.width, rect.height, 8);
+		menuEl.style.left = `${nx}px`;
+		menuEl.style.top = `${ny}px`;
 	});
 </script>
 
 {#if open}
-	<!-- BACKDROP -->
-	<div
-		use:portal={portalTarget}
-		role="dialog"
-		class="fixed inset-0 z-[2147483646]"
-		onclick={() => close()}
-		oncontextmenu={(e) => e.preventDefault()}
-		aria-modal="true"
-		tabindex="0"
-		style="pointer-events:auto"
-	/>
-
-	<!-- MENÚ -->
 	<div
 		bind:this={menuEl}
 		use:portal={portalTarget}
-		class="fixed z-[2147483647] w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-gray-900"
-		style={`left:${x}px; top:${y}px`}
+		class="context-menu-portal fixed z-[2147483647] w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-gray-900"
 		oncontextmenu={(e) => e.preventDefault()}
 	>
 		<div class="flex items-center gap-1 px-1 py-1">
@@ -243,42 +233,46 @@
 		<div
 			class="max-h-72 overflow-auto rounded-xl border border-gray-200 p-1 dark:border-gray-800 dark:bg-gray-950"
 		>
-			{#each filtered as it}
-				{#if it.kind === 'divider'}
-					<div class="my-1 border-t border-gray-200 dark:border-gray-800"></div>
-				{:else if it.kind === 'label'}
-					<div class="px-3 py-1 text-[11px] tracking-wide uppercase opacity-60">{it.label}</div>
-				{:else}
-					<button
-						class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-800"
-						role="dialog"
-						disabled={it.disabled}
-						onclick={() => clickItem(it)}
-					>
-						<span class="truncate">{it.label}</span>
-						<span class="flex items-center gap-2">
-							{#if it.shortcut}
-								<kbd class="rounded bg-gray-100 px-1 text-[10px] dark:bg-gray-800"
-									>{it.shortcut}</kbd
-								>
-							{/if}
-							{#if hasChildren(it)}
-								<svg
-									width="14"
-									height="14"
-									viewBox="0 0 24 24"
-									class="opacity-60"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg
-								>
-							{/if}
-						</span>
-					</button>
-				{/if}
-			{/each}
+			{#if filtered.length}
+				{#each filtered as it}
+					{#if it.kind === 'divider'}
+						<div class="my-1 border-t border-gray-200 dark:border-gray-800"></div>
+					{:else if it.kind === 'label'}
+						<div class="px-3 py-1 text-[11px] tracking-wide uppercase opacity-60">{it.label}</div>
+					{:else}
+						<button
+							class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-800"
+							role="dialog"
+							disabled={it.disabled}
+							onclick={() => clickItem(it)}
+						>
+							<span class="truncate">{it.label}</span>
+							<span class="flex items-center gap-2">
+								{#if it.shortcut}
+									<kbd class="rounded bg-gray-100 px-1 text-[10px] dark:bg-gray-800"
+										>{it.shortcut}</kbd
+									>
+								{/if}
+								{#if hasChildren(it)}
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										class="opacity-60"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg
+									>
+								{/if}
+							</span>
+						</button>
+					{/if}
+				{/each}
+			{:else}
+				<div class="my-1 border-t border-gray-200 dark:border-gray-800">No hay resultados</div>
+			{/if}
 		</div>
 	</div>
 {/if}
