@@ -22,13 +22,17 @@
 
 	let stack = $state<{ label: string; items: TContextMenuEntry[] }[]>([]);
 	let q = $state('');
-
 	const current = $derived(stack.length ? stack[stack.length - 1] : { label: title, items });
 
+	let menuEl: HTMLDivElement | null = $state(null);
+
 	function close() {
+		if (menuEl) menuEl.hidePopover();
 		open = false;
 		stack = [];
 		q = '';
+		x = 0;
+		y = 0;
 	}
 
 	function hasChildren(it: TContextMenuEntry) {
@@ -60,8 +64,6 @@
 		const list = current.items ?? [];
 		const query = q.trim().toLowerCase();
 		let arr = query ? list.filter((it) => matches(it, query)) : list.slice();
-
-		// limpiar divisores (sin duplicados, ni al principio/fin)
 		const out: TContextMenuEntry[] = [];
 		let prevDiv = false;
 		for (const it of arr) {
@@ -94,34 +96,54 @@
 		}
 	}
 
+	// Manage popover open/close
 	$effect(() => {
-		if (!open) return;
-		const handler = (e: KeyboardEvent) => onKey(e);
-		document.addEventListener('keydown', handler);
-		return () => document.removeEventListener('keydown', handler);
+		if (!menuEl) return;
+		if (open) {
+			menuEl.style.setProperty('--popover-x', `${x}px`);
+			menuEl.style.setProperty('--popover-y', `${y}px`);
+			menuEl.showPopover();
+		} else {
+			menuEl.hidePopover();
+		}
+	});
+
+	// Clamp position to viewport
+	$effect(() => {
+		if (!open || !menuEl) return;
+		requestAnimationFrame(() => {
+			if (!menuEl) return;
+			const rect = menuEl.getBoundingClientRect();
+			const vw = document.documentElement.clientWidth;
+			const vh = document.documentElement.clientHeight;
+			let nx = x;
+			let ny = y;
+			const padding = 8;
+			if (nx + rect.width + padding > vw) nx = Math.max(padding, vw - rect.width - padding);
+			if (ny + rect.height + padding > vh) ny = Math.max(padding, vh - rect.height - padding);
+			if (nx !== x || ny !== y) {
+				x = nx;
+				y = ny;
+				menuEl.style.setProperty('--popover-x', `${nx}px`);
+				menuEl.style.setProperty('--popover-y', `${ny}px`);
+			}
+		});
 	});
 </script>
 
 {#if open}
 	<div
-		role="dialog"
-		class="fixed inset-0 z-40"
-		onclick={() => close()}
+		bind:this={menuEl}
+		popover="manual"
+		class="w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-gray-900"
+		style="position: fixed; left: var(--popover-x); top: var(--popover-y);"
 		oncontextmenu={(e) => e.preventDefault()}
-		aria-modal="true"
-		tabindex="0"
-	/>
-
-	<div
-		class="fixed z-50 w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-gray-900"
-		style={`left:${x}px; top:${y}px`}
-		oncontextmenu={(e) => e.preventDefault()}
+		onkeydown={onKey}
 	>
 		<div class="flex items-center gap-1 px-1 py-1">
 			{#if stack.length > 0}
 				<button
 					class="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
-					role="dialog"
 					aria-label="Atrás"
 					onclick={back}
 				>
@@ -133,8 +155,10 @@
 						stroke="currentColor"
 						stroke-width="2"
 						stroke-linecap="round"
-						stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg
+						stroke-linejoin="round"
 					>
+						<polyline points="15 18 9 12 15 6" />
+					</svg>
 				</button>
 			{/if}
 			<div class="min-w-0 flex-1 truncate px-1 text-xs font-medium opacity-70">
@@ -160,16 +184,15 @@
 				{:else}
 					<button
 						class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-800"
-						role="dialog"
 						disabled={it.disabled}
 						onclick={() => clickItem(it)}
 					>
 						<span class="truncate">{it.label}</span>
 						<span class="flex items-center gap-2">
 							{#if it.shortcut}
-								<kbd class="rounded bg-gray-100 px-1 text-[10px] dark:bg-gray-800"
-									>{it.shortcut}</kbd
-								>
+								<kbd class="rounded bg-gray-100 px-1 text-[10px] dark:bg-gray-800">
+									{it.shortcut}
+								</kbd>
 							{/if}
 							{#if hasChildren(it)}
 								<svg
@@ -181,8 +204,10 @@
 									stroke="currentColor"
 									stroke-width="2"
 									stroke-linecap="round"
-									stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg
+									stroke-linejoin="round"
 								>
+									<polyline points="9 18 15 12 9 6" />
+								</svg>
 							{/if}
 						</span>
 					</button>
@@ -191,3 +216,12 @@
 		</div>
 	</div>
 {/if}
+
+<style lang="postcss">
+	[popover] {
+		margin: 0;
+		border: none;
+		padding: 0;
+		z-index: 2147483647;
+	}
+</style>

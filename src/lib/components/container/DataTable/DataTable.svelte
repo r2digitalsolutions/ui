@@ -71,7 +71,7 @@
 		manager.setReservedWidth(reserved);
 	});
 
-	// reflow ancho
+	// Reflow ancho
 	$effect(() => {
 		if (!container) return;
 		const ro = new ResizeObserver((entries) => {
@@ -82,7 +82,7 @@
 		return () => ro.disconnect();
 	});
 
-	// medir DOM
+	// Medir DOM
 	const SAMPLE_ROWS = 10;
 	async function measureColumns() {
 		await tick();
@@ -124,7 +124,15 @@
 	) {
 		e.preventDefault();
 		const columnIndex = columnId ? manager.state.visibleColumns.indexOf(columnId) : null;
-		rightMenu = { open: true, x: e.clientX, y: e.clientY };
+		// Always set fresh coordinates and ensure menu is closed before reopening
+		if (rightMenu.open) {
+			rightMenu = { open: false, x: 0, y: 0 };
+			setTimeout(() => {
+				rightMenu = { open: true, x: e.clientX, y: e.clientY };
+			}, 0);
+		} else {
+			rightMenu = { open: true, x: e.clientX, y: e.clientY };
+		}
 		rightClickContext = {
 			row,
 			rowIndex,
@@ -140,13 +148,14 @@
 		return manager.state.items.filter((r) => ids.has(rowId(r)));
 	}
 
-	// tracks
+	// Tracks
 	function colTrack(cId: string, measuring: boolean) {
 		if (measuring) return 'max-content';
 		const c = manager.getColumn(cId);
 		const w = manager.measured[cId] ?? c.width ?? c.minWidth ?? 160;
 		return `${Math.max(40, Math.ceil(Number(w)))}px`;
 	}
+
 	function headerTemplateCols(visible: string[], endExtras: boolean) {
 		const tracks = [
 			`${CHECK_W}px`,
