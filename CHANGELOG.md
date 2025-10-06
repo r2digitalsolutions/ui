@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- 5b0d4ae: fix: update contextmenu
+
+## 0.24.7
+
+### Patch Changes
+
 - 4d4f340: fix
 
 ## 0.24.6
