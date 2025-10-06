@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.24.4
+
+### Patch Changes
+
+- f4885c9: fix: 4
+
 ## 0.24.3
 
 ### Patch Changes
