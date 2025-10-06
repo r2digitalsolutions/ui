@@ -1,6 +1,6 @@
 {
 	"name": "@r2digisolutions/ui",
-	"version": "0.24.0",
+	"version": "0.24.1",
 	"private": false,
 	"packageManager": "bun@1.2.23",
 	"publishConfig": {

@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.24.1
+
+### Patch Changes
+
+- d2b5cf2: fix
+- 4e66d9a: fix: update versions
+
 ## 0.24.0
 
 ### Minor Changes
