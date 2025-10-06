@@ -180,6 +180,8 @@
 			if (nx !== x || ny !== y) {
 				x = nx;
 				y = ny;
+				menuEl.style.left = `${nx}px`;
+				menuEl.style.top = `${ny}px`;
 			}
 		});
 	});

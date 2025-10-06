@@ -124,14 +124,7 @@
 	) {
 		e.preventDefault();
 		const columnIndex = columnId ? manager.state.visibleColumns.indexOf(columnId) : null;
-		if (rightMenu.open) {
-			rightMenu = { open: false, x: 0, y: 0 };
-			setTimeout(() => {
-				rightMenu = { open: true, x: e.clientX, y: e.clientY };
-			}, 0);
-		} else {
-			rightMenu = { open: true, x: e.clientX, y: e.clientY };
-		}
+		rightMenu = { open: true, x: e.clientX, y: e.clientY };
 		rightClickContext = {
 			row,
 			rowIndex,
