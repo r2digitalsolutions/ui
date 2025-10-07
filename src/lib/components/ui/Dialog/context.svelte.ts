@@ -1,16 +1,16 @@
 import { getContext, setContext } from 'svelte';
 import { ModalContext } from './ModalContext.svelte';
 
-export const KEY = Symbol('Dialog');
+export const KEY_DIALOG = Symbol('Dialog');
 
-export interface DialogActions {
+export interface IDialogActions {
 	onOpenChange?(open: boolean): void;
 }
 
-export function createDialogContext(fn_open: any, actions: DialogActions = {}) {
+export function createDialogContext(fn_open: any, actions: IDialogActions = {}) {
 	const context = new ModalContext(fn_open());
 
-	setContext(KEY, context);
+	setContext(KEY_DIALOG, context);
 
 	$effect(() => {
 		context.open = fn_open();
@@ -26,5 +26,5 @@ export function createDialogContext(fn_open: any, actions: DialogActions = {}) {
 }
 
 export function useDialogContext() {
-	return getContext(KEY) as ModalContext;
+	return getContext(KEY_DIALOG) as ModalContext;
 }

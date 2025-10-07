@@ -144,6 +144,10 @@
 		return manager.state.items.filter((r) => ids.has(rowId(r)));
 	}
 
+	const selectedRowsItems = $derived.by(() => {
+		return selectedRows();
+	});
+
 	function colTrack(cId: string, measuring: boolean) {
 		if (measuring) return 'max-content';
 		const c = manager.getColumn(cId);
@@ -379,7 +383,7 @@
 		x={rightMenu.x}
 		y={rightMenu.y}
 		context={rightClickContext}
-		items={(actions?.(selectedRows(), rightClickContext) ?? []).map((a) => ({
+		items={(actions?.(selectedRowsItems, rightClickContext) ?? []).map((a) => ({
 			...a,
 			onClick: a.onClick
 		}))}
