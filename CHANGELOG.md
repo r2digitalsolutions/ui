@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.24.8
+
+### Patch Changes
+
+- 26bd53b: fix: context
+
 ## 0.24.7
 
 ### Patch Changes
