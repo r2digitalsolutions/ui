@@ -7,6 +7,7 @@ import type {
   TDataTableFetchResult
 } from './types.js';
 import { normalize, defaultAccessor, compareValues, applyFilterOp } from './utils.js';
+import { untrack } from 'svelte';
 
 export class DataTableManager<T extends { id?: any } = any> {
   options: TDataTableTableOptions<T> = $state({
@@ -40,7 +41,8 @@ export class DataTableManager<T extends { id?: any } = any> {
   expanded: SvelteSet<any> = new SvelteSet();
   lastWidth: number | null = $state<number | null>(null);
 
-  constructor(opts: TDataTableTableOptions<T>) {
+  constructor(options: () => TDataTableTableOptions<T>) {
+    const opts = options();
     const columns = normalize(opts.columns);
 
     this.options = ({
@@ -55,6 +57,20 @@ export class DataTableManager<T extends { id?: any } = any> {
       sortDir: opts.initialSortDir ?? null,
       filters: opts.initialFilters ?? [],
       visibleColumns: columns.map((c) => c.id),
+    });
+
+    $effect(() => {
+      const new_options = options();
+
+      untrack(() => {
+        const columns = normalize(new_options.columns);
+        this.options = {
+          ...new_options,
+          columns
+        };
+
+        this.load();
+      });
     });
   }
 

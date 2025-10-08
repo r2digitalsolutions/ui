@@ -48,7 +48,7 @@
 	const ACTION_W = 56;
 	const EXPAND_W = 40;
 
-	const manager = new DataTableManager<T>(options);
+	const manager = new DataTableManager<T>(() => options);
 
 	let filterValues = $state<Record<string, any>>({});
 	let container: HTMLDivElement | null = $state(null);
