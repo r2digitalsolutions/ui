@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.24.10
+
+### Patch Changes
+
+- c5ca923: fix: table reload
+
 ## 0.24.9
 
 ### Patch Changes
