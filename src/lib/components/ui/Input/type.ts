@@ -33,7 +33,7 @@ interface Base<TValue = unknown> {
   oninput?: (e: Event & { currentTarget: HTMLInputElement }) => void;
 }
 
-export interface ITextInputProps extends Base<string | null> {
+export interface ITextInputProps extends Base<string | null | number> {
   type: 'text';
   minlength?: number;
   maxlength?: number;
