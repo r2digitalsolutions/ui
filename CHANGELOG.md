@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.25.0
+
+### Minor Changes
+
+- 8b60f50: chore: update versions
+
 ## 0.24.10
 
 ### Patch Changes
