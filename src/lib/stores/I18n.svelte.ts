@@ -10,12 +10,24 @@ export class StoreI18n {
     this.#translations = translations;
   }
 
+  t = $derived.by(() => {
+    return (key: string, params: Record<string, string> = {}) => {
+      const translations = this.#translations?.[this.#language || this.#defaultLanguage];
+      const translation = this.#getTranslationValue(translations, key);
+
+      if (!translation || typeof translation !== "string") {
+        return `--${key}--`;
+      }
+
+      return Object.entries(params).reduce((acc, [key, value]) => {
+        return acc.replace(`{${key}}`, value);
+      }, translation);
+    };
+  });
+
   init({ language, translations }: { language: string, translations: I18nTranslationType }) {
     this.#language = language;
-    this.#translations = {
-      ...this.#translations,
-      ...translations
-    };
+    this.#translations = translations;
   }
 
   #getTranslationValue(translations: any, key: string): string | undefined {
@@ -40,23 +52,5 @@ export class StoreI18n {
 
   set translations(value: I18nTranslationType) {
     this.#translations = value;
-  }
-
-  get t() {
-    this.#language;
-    this.#translations;
-
-    return (key: string, params: Record<string, string> = {}) => {
-      const translations = this.#translations?.[this.#language || this.#defaultLanguage];
-      const translation = this.#getTranslationValue(translations, key);
-
-      if (!translation || typeof translation !== "string") {
-        return `--${key}--`;
-      }
-
-      return Object.entries(params).reduce((acc, [key, value]) => {
-        return acc.replace(`{${key}}`, value);
-      }, translation);
-    };
   }
 }
