@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.25.3
+
+### Patch Changes
+
+- 6185ede: fix: version
+- da89721: fix: versions
+
 ## 0.25.0
 
 ### Minor Changes
