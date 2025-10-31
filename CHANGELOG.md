@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.25.5
+
+### Patch Changes
+
+- 77e70ee: fix: versions
+
 ## 0.25.4
 
 ### Patch Changes
