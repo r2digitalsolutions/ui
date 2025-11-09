@@ -10,6 +10,6 @@
 	const { children, ...props }: Props = $props();
 </script>
 
-<div class={['flex flex-1 flex-col p-3', props.class]}>
+<div class={['flex flex-1 flex-col p-5', props.class]}>
 	{@render children()}
 </div>
