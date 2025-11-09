@@ -4,18 +4,29 @@
 	import CardHeader from './CardHeader.svelte';
 
 	const { children, footer, header, onclick, body_class, ...props }: Props = $props();
+
+	const isInteractive = $derived(typeof onclick === 'function');
+	const Tag = $derived(isInteractive ? 'button' : 'article');
 </script>
 
 <svelte:element
-	this={onclick ? 'button' : 'article'}
+	this={Tag}
 	{...props}
-	role="button"
-	type={onclick ? 'button' : undefined}
-	tabindex="0"
-	aria-label="Card"
 	{onclick}
+	type={isInteractive ? 'button' : undefined}
+	role={isInteractive ? 'button' : undefined}
+	tabindex={isInteractive ? 0 : undefined}
+	data-interactive={isInteractive}
 	class={[
-		'rounded-3xl border border-white/50 bg-white text-black shadow-sm backdrop-blur-xl dark:border-neutral-700 dark:bg-neutral-900 dark:text-white',
+		'relative flex flex-col overflow-hidden rounded-2xl border text-sm',
+		'border-neutral-200/80 bg-white/80 text-neutral-900 shadow-sm shadow-black/5 backdrop-blur-xl',
+		'dark:border-neutral-800/80 dark:bg-neutral-950/80 dark:text-neutral-50',
+
+		isInteractive &&
+			'cursor-pointer transition-all duration-150 hover:-translate-y-px hover:border-neutral-300 hover:shadow-md hover:shadow-black/10 dark:hover:border-neutral-600',
+		isInteractive &&
+			'focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none',
+
 		props.class
 	]}
 >
