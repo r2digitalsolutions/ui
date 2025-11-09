@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.26.2
+
+### Patch Changes
+
+- 2238c25: fix: test styles
+- a89d28d: fix: new design
+
 ## 0.26.1
 
 ### Patch Changes
