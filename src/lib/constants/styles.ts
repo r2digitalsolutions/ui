@@ -1,6 +1,6 @@
-const SHELL_TRANSPARENT = "backdrop-blur-xl ring-1 ring-neutral-200/80 dark:ring-neutral-800/80 shadow-xs shadow-black/10 bg-white/95";
+const SHELL_TRANSPARENT = "backdrop-blur-xl ring-1 ring-neutral-200/80 dark:ring-neutral-800/80 shadow-xs shadow-black/10 bg-white/95 dark:bg-neutral-950/20";
 const SHELL =
-  'bg-white/95 dark:bg-neutral-950/95 ' + SHELL_TRANSPARENT;
+  'bg-white/95 dark:!bg-neutral-950/95 ' + SHELL_TRANSPARENT;
 const ACCENT_GRADIENT = 'from-indigo-500 via-violet-500 to-blue-500';
 
 const LOCAL_STYLES = {
