@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.6
+
+### Patch Changes
+
+- 694126c: fix: button colotd
+
 ## 0.26.5
 
 ### Patch Changes
