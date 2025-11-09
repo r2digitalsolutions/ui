@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.0
+
+### Minor Changes
+
+- b545a89: feat: changes design modal
+
 ## 0.25.5
 
 ### Patch Changes
