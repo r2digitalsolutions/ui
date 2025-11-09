@@ -5,9 +5,9 @@
 
 	const paddings: Record<typeof padding, string> = {
 		none: 'p-0',
-		sm: 'md:px-4 px-4 pb-4',
-		md: 'md:px-6 px-4 pb-4',
-		lg: 'md:px-8 px-4 pb-4'
+		sm: 'md:p-4 p-4',
+		md: 'md:p-6 p-4',
+		lg: 'md:p-8 p-4'
 	};
 </script>
 

@@ -4,6 +4,12 @@
 	const { children, ...props }: DialogDescriptionProps = $props();
 </script>
 
-<p class={['text-md text-center text-pretty sm:text-left dark:text-gray-300', props.class]}>
+<p
+	class={[
+		'text-md text-center text-pretty sm:text-left',
+		'text-neutral-600 dark:text-neutral-300',
+		props.class
+	]}
+>
 	{@render children()}
 </p>

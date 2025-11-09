@@ -1,5 +1,7 @@
 export class ModalContext {
 	#open = $state<boolean>(false);
+	#is_minimized = $state<boolean>(false);
+	#is_maximized = $state<boolean>(false);
 	#ref_dialog = $state<HTMLDialogElement>();
 
 	constructor(initialOpen = false) {
@@ -19,6 +21,14 @@ export class ModalContext {
 		this.#ref_dialog?.close();
 	}
 
+	onRequestMinimize() {
+		this.#is_minimized = !this.#is_minimized;
+	}
+
+	onRequestMaximize() {
+		this.#is_maximized = !this.#is_maximized;
+	}
+
 	get open() {
 		return this.#open;
 	}
@@ -29,6 +39,14 @@ export class ModalContext {
 
 	get ref_dialog() {
 		return this.#ref_dialog;
+	}
+
+	get is_minimized() {
+		return this.#is_minimized;
+	}
+
+	get is_maximized() {
+		return this.#is_maximized;
 	}
 
 	set ref_dialog(value: HTMLDialogElement | undefined) {

@@ -4,22 +4,25 @@ import type { ClassValue } from 'svelte/elements';
 export interface DialogProps {
 	closedby?: 'none' | 'closerequest' | 'any';
 	size?:
-		| 'sm'
-		| 'md'
-		| 'lg'
-		| 'xl'
-		| '2xl'
-		| '3xl'
-		| '4xl'
-		| '5xl'
-		| '6xl'
-		| '7xl'
-		| 'full'
-		| 'auto';
+	| 'sm'
+	| 'md'
+	| 'lg'
+	| 'xl'
+	| '2xl'
+	| '3xl'
+	| '4xl'
+	| '5xl'
+	| '6xl'
+	| '7xl'
+	| 'full'
+	| 'auto';
 	padding?: 'none' | 'sm' | 'md' | 'lg';
 	class?: ClassValue;
 	children: Snippet;
 	open?: boolean;
+	aside?: Snippet;
+	asideWidth?: string;          // ancho (ej: '300px'), por defecto
+	showGridBackground?: boolean; // cuadriculado sutil en el panel principal
 	header?: Snippet;
 	footer?: Snippet;
 	onclose?(): void;
