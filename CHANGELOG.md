@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.26.1
+
+### Patch Changes
+
+- c29da4e: fix: bg
+- b0b975b: fix: bg
+
 ## 0.26.0
 
 ### Minor Changes
