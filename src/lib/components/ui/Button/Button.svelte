@@ -14,7 +14,7 @@
 	}: Props = $props();
 
 	const baseClasses =
-		'inline-flex items-center justify-center font-medium rounded-xl select-none transition-all duration-150 outline-none ' +
+		'inline-flex items-center justify-center font-medium rounded-xl select-none transition-all duration-150 outline-none cursor-pointer ' +
 		'focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ' +
 		'disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none';
 
