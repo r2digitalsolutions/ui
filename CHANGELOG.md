@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.5
+
+### Patch Changes
+
+- 56282fe: fix: padding
+
 ## 0.26.4
 
 ### Patch Changes
