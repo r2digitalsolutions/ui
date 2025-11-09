@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.4
+
+### Patch Changes
+
+- 18753f3: fix: new design no content
+
 ## 0.26.3
 
 ### Patch Changes
