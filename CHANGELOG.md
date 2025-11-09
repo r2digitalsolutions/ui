@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.3
+
+### Patch Changes
+
+- 3c2e6e6: fix: design Card
+
 ## 0.26.2
 
 ### Patch Changes
