@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.8
+
+### Patch Changes
+
+- 50474a3: fix: border
+
 ## 0.26.7
 
 ### Patch Changes
