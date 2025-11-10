@@ -10,6 +10,11 @@
 	const { children, ...props }: Props = $props();
 </script>
 
-<header class={['flex flex-row gap-2 p-3 pb-2', props.class]}>
+<header
+	class={[
+		'dark:border-neutral-800/80" flex items-center gap-3 border-b border-neutral-200/60 px-5 py-5',
+		props.class
+	]}
+>
 	{@render children()}
 </header>
