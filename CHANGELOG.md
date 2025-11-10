@@ -1,5 +1,12 @@
 # @r2digisolutions/ui
 
+## 0.26.7
+
+### Patch Changes
+
+- 3d9e06b: fix: card body
+- 5e537c0: fix: pointer
+
 ## 0.26.6
 
 ### Patch Changes
