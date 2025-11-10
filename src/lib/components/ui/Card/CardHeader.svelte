@@ -12,7 +12,7 @@
 
 <header
 	class={[
-		'dark:border-neutral-800/80" flex items-center gap-3 border-b border-neutral-200/60 px-5 py-5',
+		'flex items-center gap-3 border-b border-neutral-200/60 px-5 py-5 dark:border-neutral-800/80',
 		props.class
 	]}
 >
