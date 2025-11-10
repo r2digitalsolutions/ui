@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.10
+
+### Patch Changes
+
+- 4f9cf10: fix: width
+
 ## 0.26.9
 
 ### Patch Changes
