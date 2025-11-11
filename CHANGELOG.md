@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.11
+
+### Patch Changes
+
+- 9b53438: fix: dialog footer
+
 ## 0.26.10
 
 ### Patch Changes
