@@ -6,7 +6,7 @@
 
 <footer
 	class={[
-		'flex gap-2 px-6 pb-6',
+		'flex gap-2 px-6 py-3',
 		props.class,
 		position === 'start' && 'justify-start',
 		position === 'center' && 'justify-center',
