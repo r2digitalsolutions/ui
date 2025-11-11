@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.26.12
+
+### Patch Changes
+
+- 4eb59f0: fix: update colors
+
 ## 0.26.11
 
 ### Patch Changes
