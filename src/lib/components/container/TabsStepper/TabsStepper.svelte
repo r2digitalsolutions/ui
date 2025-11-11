@@ -23,7 +23,7 @@
 		canGoPrev?: (idx: number) => Promise<boolean> | boolean;
 
 		mode?: Mode;
-		forwardTabBehavior?: ForwardTabBehavior; // NUEVO
+		forwardTabBehavior?: ForwardTabBehavior;
 		stickyFooter?: boolean;
 		showHeader?: boolean;
 		showProgressBar?: boolean;
@@ -51,12 +51,10 @@
 
 	let maxReached = $state(current);
 
-	// Si avanzamos, actualizamos maxReached
 	$effect(() => {
 		if (current > maxReached) maxReached = current;
 	});
 
-	// Ajustar si la cantidad de pasos cambia
 	$effect(() => {
 		if (maxReached > steps.length) maxReached = steps.length;
 		if (current > steps.length) current = steps.length;
@@ -146,12 +144,12 @@
 					<button
 						type="button"
 						class={[
-							'group relative inline-flex items-center gap-3 rounded-xl border px-3 py-2 transition',
+							'group relative inline-flex items-center gap-3 rounded-xl border px-3 py-2 text-sm transition-all duration-150',
 							state === 'active'
-								? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
+								? 'border-indigo-500/80 bg-white/95 text-neutral-900 shadow-sm shadow-indigo-500/20 dark:border-indigo-400/80 dark:bg-neutral-900/95 dark:text-neutral-50'
 								: state === 'done'
-									? 'border-emerald-500/50 bg-emerald-50 text-emerald-700'
-									: 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50',
+									? 'border-neutral-300 bg-neutral-50 text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100'
+									: 'border-transparent bg-transparent text-neutral-500 hover:border-neutral-300 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80',
 							allowed ? 'cursor-pointer' : 'pointer-events-none cursor-not-allowed opacity-60'
 						].join(' ')}
 						aria-current={state === 'active' ? 'step' : undefined}
@@ -162,46 +160,51 @@
 					>
 						<div
 							class={[
-								'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-semibold',
+								'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold',
 								state === 'active'
-									? 'border-purple-600 bg-white text-purple-700'
+									? 'border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:border-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-300'
 									: state === 'done'
-										? 'border-emerald-500 bg-white text-emerald-700'
-										: 'border-gray-300 bg-white text-gray-600'
+										? 'border-emerald-500 bg-emerald-500/5 text-emerald-600 dark:border-emerald-400 dark:bg-emerald-500/10 dark:text-emerald-300'
+										: 'border-neutral-300 bg-white text-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-400'
 							].join(' ')}
 						>
 							{#if state === 'done'}
 								<svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
-									<path d="M7.5 11.5l-2-2 -1 1 3 3 7-7 -1-1 -6 6z" />
+									<path d="M7.5 11.5l-2-2 -1 1 3 3 7-7 -1-1 -6 6z" class="fill-current" />
 								</svg>
 							{:else}
 								{idx}
 							{/if}
 						</div>
 
-						<!-- Texto -->
 						<div class="min-w-0 text-left">
-							<div class="truncate text-sm font-medium">{s.label}</div>
+							<div class="truncate text-sm font-medium text-neutral-900 dark:text-neutral-50">
+								{s.label}
+							</div>
 							{#if state === 'active'}
-								<div class="truncate text-xs text-purple-700/70">En curso</div>
+								<div class="truncate text-xs text-indigo-500 dark:text-indigo-300">En curso</div>
 							{:else if state === 'done'}
-								<div class="truncate text-xs text-emerald-700/70">Completado</div>
+								<div class="truncate text-xs text-emerald-600 dark:text-emerald-300">
+									Completado
+								</div>
 							{:else}
-								<div class="truncate text-xs text-gray-500">Pendiente</div>
+								<div class="truncate text-xs text-neutral-500 dark:text-neutral-500">Pendiente</div>
 							{/if}
 						</div>
 					</button>
 
 					{#if showConnectors && i < steps.length - 1}
-						<div class="h-px w-6 bg-gradient-to-r from-gray-300 to-gray-200 sm:w-8"></div>
+						<div
+							class="hidden h-px w-6 rounded-full bg-neutral-200/80 sm:block sm:w-8 dark:bg-neutral-800/80"
+						></div>
 					{/if}
 				{/each}
 			</div>
 
 			{#if showProgressBar}
-				<div class="mt-3 h-1.5 w-full rounded-full bg-gray-200">
+				<div class="mt-3 h-1.5 w-full rounded-full bg-neutral-200/80 dark:bg-neutral-800/80">
 					<div
-						class="h-1.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-300"
+						class="h-1.5 rounded-full bg-linear-to-r from-indigo-500 via-violet-500 to-blue-500 transition-all duration-300"
 						style:width={`${pct}%`}
 					></div>
 				</div>
@@ -224,14 +227,16 @@
 
 	<div
 		class={stickyFooter
-			? 'sticky right-0 bottom-0 left-0 bg-gradient-to-t from-white via-white to-transparent pt-4'
+			? 'sticky right-0 bottom-0 left-0 bg-linear-to-t from-neutral-50 via-neutral-50/95 to-transparent pt-4 dark:from-neutral-950 dark:via-neutral-950/95 dark:to-transparent'
 			: 'mt-6'}
 	>
-		<div class="flex w-full gap-3 border-t border-gray-200 pt-4">
+		<div class="flex w-full gap-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
 			{#if footer}
 				{@render footer({ current, total, next, prev, goTo })}
 			{:else}
-				<Button type="button" onclick={prev} disabled={current === 1}>Anterior</Button>
+				<Button type="button" variant="outline" onclick={prev} disabled={current === 1}>
+					Anterior
+				</Button>
 				<Button type="button" onclick={next} disabled={current === total}>Siguiente</Button>
 			{/if}
 		</div>
