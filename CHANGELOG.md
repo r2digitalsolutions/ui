@@ -1,5 +1,15 @@
 # @r2digisolutions/ui
 
+## 0.27.0
+
+### Minor Changes
+
+- a68c5ef: feat: formStatus
+
+### Patch Changes
+
+- 4cb35ce: fix: table
+
 ## 0.26.12
 
 ### Patch Changes
