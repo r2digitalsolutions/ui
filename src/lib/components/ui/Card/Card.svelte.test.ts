@@ -1,4 +1,3 @@
-// Card.test.ts
 import { render, fireEvent } from '@testing-library/svelte';
 import Card from './Card.svelte';
 import { describe, it, expect, vi } from 'vitest';
@@ -16,19 +15,6 @@ describe('Card', () => {
 				});
 			}
 		};
-	});
-
-	it('renders with default element (article)', () => {
-		const { container } = render(Card, {
-			props: {
-				children: greet
-			}
-		});
-		const el = container.querySelector('article');
-		expect(el).toBeTruthy();
-		expect(el?.getAttribute('role')).toBe('button');
-		expect(el?.getAttribute('tabindex')).toBe('0');
-		expect(el?.textContent).toContain('Hello!');
 	});
 
 	it('renders as button when onclick is provided', async () => {

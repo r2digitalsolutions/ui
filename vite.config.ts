@@ -7,7 +7,7 @@ export default defineConfig({
 
   test: {
     environment: 'jsdom',
-    workspace: [
+    projects: [
       {
         extends: './vite.config.ts',
         plugins: [svelteTesting()],

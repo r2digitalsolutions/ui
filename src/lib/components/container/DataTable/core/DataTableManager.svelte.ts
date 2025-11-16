@@ -16,8 +16,9 @@ export class DataTableManager<T extends { id?: any } = any> {
     multiSelect: true,
     columns: [],
     loadMode: 'local',
-    data: [],
+    data: []
   });
+
   state: TDataTableTableState<T> = $state({
     ready: false,
     items: [],
@@ -45,20 +46,21 @@ export class DataTableManager<T extends { id?: any } = any> {
     const opts = options();
     const columns = normalize(opts.columns);
 
-    this.options = ({
+    this.options = {
       ...opts,
       columns
-    });
+    };
 
-    this.state = ({
+    this.state = {
       ...this.state,
       perPage: this.options.perPage!,
       sortBy: opts.initialSortBy ?? null,
       sortDir: opts.initialSortDir ?? null,
       filters: opts.initialFilters ?? [],
-      visibleColumns: columns.map((c) => c.id),
-    });
+      visibleColumns: columns.map((c) => c.id)
+    };
 
+    // Sincroniza con cambios en options() (columnas, fetcher, etc.)
     $effect(() => {
       const new_options = options();
 
@@ -69,6 +71,7 @@ export class DataTableManager<T extends { id?: any } = any> {
           columns
         };
 
+        // Lógica: si cambian opciones, recargamos data con los nuevos ajustes
         this.load();
       });
     });
@@ -79,15 +82,31 @@ export class DataTableManager<T extends { id?: any } = any> {
     this.reflow();
   }
 
-  get columns() { return this.options.columns; }
-  getColumn(id: string) { return this.columns.find((c) => c.id === id)!; }
+  get columns() {
+    return this.options.columns;
+  }
 
-  isExpanded(id: any) { return this.expanded.has(id); }
-  toggleExpand(id: any) { this.isExpanded(id) ? this.expanded.delete(id) : this.expanded.add(id); }
+  getColumn(id: string) {
+    return this.columns.find((c) => c.id === id)!;
+  }
+
+  isExpanded(id: any) {
+    return this.expanded.has(id);
+  }
+
+  toggleExpand(id: any) {
+    if (this.isExpanded(id)) this.expanded.delete(id);
+    else this.expanded.add(id);
+  }
 
   setColumnVisibility(id: string, show: boolean) {
-    if (show) { this.forcedVisible.add(id); this.forcedHidden.delete(id); }
-    else { this.forcedHidden.add(id); this.forcedVisible.delete(id); }
+    if (show) {
+      this.forcedVisible.add(id);
+      this.forcedHidden.delete(id);
+    } else {
+      this.forcedHidden.add(id);
+      this.forcedVisible.delete(id);
+    }
     this.reflow();
   }
 
@@ -102,7 +121,6 @@ export class DataTableManager<T extends { id?: any } = any> {
     this.forcedHidden.clear();
     this.reflow();
   }
-
 
   visibilityPlan(containerWidth: number): TDataTableVisibilityPlan {
     const available = Math.max(0, Math.floor(containerWidth) - (this.reservedWidth ?? 0));
@@ -119,7 +137,9 @@ export class DataTableManager<T extends { id?: any } = any> {
     // columnas que siempre se ocultan en móvil, aunque quepan
     const mustHide = new Set<string>();
     if (available < 640) {
-      for (const c of cols) if (c.hideOnMobile) mustHide.add(c.id);
+      for (const c of cols) {
+        if (c.hideOnMobile) mustHide.add(c.id);
+      }
     }
 
     // empezamos conservando el orden original
@@ -127,13 +147,12 @@ export class DataTableManager<T extends { id?: any } = any> {
 
     const totalNeed = () => visible.reduce((sum, id) => sum + needOf(id), 0);
 
+    // Caso: no caben todas → ocultamos por prioridad
     if (totalNeed() > available) {
-      // hay que ocultar: orden de descarte por prioridad (más alta => se quita antes)
-      // empate: quitamos antes las columnas que están más a la derecha (idx más alto)
       const dropOrder = cols
         .map((c, idx) => ({ id: c.id, pr: c.priority ?? 999, idx }))
         .filter((x) => !mustHide.has(x.id))
-        .sort((a, b) => (b.pr - a.pr) || (b.idx - a.idx));
+        .sort((a, b) => b.pr - a.pr || b.idx - a.idx);
 
       const hidden = new Set<string>([...mustHide]);
 
@@ -146,7 +165,6 @@ export class DataTableManager<T extends { id?: any } = any> {
         }
       }
 
-      // overrides manuales
       const visSet = new Set(visible);
       for (const id of this.forcedHidden) visSet.delete(id);
       for (const id of this.forcedVisible) if (!mustHide.has(id)) visSet.add(id);
@@ -156,7 +174,7 @@ export class DataTableManager<T extends { id?: any } = any> {
       return { visible: finalVisible, hidden: finalHidden };
     }
 
-    // TODO cabe: respetamos tu orden original
+    // Caso: caben todas → respetamos orden original + overrides manuales
     const visSet = new Set(visible);
     for (const id of this.forcedHidden) visSet.delete(id);
     for (const id of this.forcedVisible) if (!mustHide.has(id)) visSet.add(id);
@@ -170,8 +188,14 @@ export class DataTableManager<T extends { id?: any } = any> {
     const vis = new Set(plan.visible);
     const hid = new Set(plan.hidden);
 
-    for (const id of this.forcedVisible) { vis.add(id); hid.delete(id); }
-    for (const id of this.forcedHidden) { hid.add(id); vis.delete(id); }
+    for (const id of this.forcedVisible) {
+      vis.add(id);
+      hid.delete(id);
+    }
+    for (const id of this.forcedHidden) {
+      hid.add(id);
+      vis.delete(id);
+    }
 
     return { visible: [...vis], hidden: [...hid] };
   }
@@ -181,44 +205,94 @@ export class DataTableManager<T extends { id?: any } = any> {
     this.state.hiddenColumns = plan.hidden;
   }
 
-  // NUEVO: para usar desde el ResizeObserver
   reflowForWidth(width: number) {
     this.lastWidth = width;
     const base = this.visibilityPlan(width);
     this.applyVisibility(this.mergeWithOverrides(base));
   }
 
-  // NUEVO: reflow con el último ancho conocido (o infinito si no hay)
   reflow() {
     const width = this.lastWidth ?? Number.POSITIVE_INFINITY;
     const base = this.visibilityPlan(width);
     this.applyVisibility(this.mergeWithOverrides(base));
   }
 
-  // Selección / paginación / sort / filtros (sin cambios relevantes)
-  setPerPage(n: number) { this.state.perPage = n; this.state.page = 1; return this.load(); }
-  setPage(p: number) { this.state.page = p; return this.load(); }
+  // Selección / paginación / sort / filtros
+  setPerPage(n: number) {
+    this.state.perPage = n;
+    this.state.page = 1;
+    return this.load();
+  }
+
+  setPage(p: number) {
+    this.state.page = p;
+    return this.load();
+  }
+
   setSort(id: string) {
-    if (this.state.sortBy !== id) { this.state.sortBy = id; this.state.sortDir = 'asc'; }
-    else {
-      this.state.sortDir = this.state.sortDir === 'asc' ? 'desc' : (this.state.sortDir === 'desc' ? null : 'asc');
+    if (this.state.sortBy !== id) {
+      this.state.sortBy = id;
+      this.state.sortDir = 'asc';
+    } else {
+      this.state.sortDir =
+        this.state.sortDir === 'asc'
+          ? 'desc'
+          : this.state.sortDir === 'desc'
+            ? null
+            : 'asc';
     }
     this.state.page = 1;
     return this.load();
   }
-  setFilters(filters: typeof this.state.filters) { this.state.filters = filters; this.state.page = 1; return this.load(); }
-  clearFilters() { this.state.filters = []; this.state.page = 1; return this.load(); }
-  toggleSelect(rowId: any) { const s = this.state.selected; s.has(rowId) ? s.delete(rowId) : s.add(rowId); }
-  clearSelection() { this.state.selected.clear(); }
-  selectAllCurrentPage(getId: (row: T) => any = (r) => (r as any).id) { this.state.items.forEach((r) => this.state.selected.add(getId(r))); }
 
+  setFilters(filters: typeof this.state.filters) {
+    this.state.filters = filters;
+    this.state.page = 1;
+    return this.load();
+  }
+
+  clearFilters() {
+    this.state.filters = [];
+    this.state.page = 1;
+    return this.load();
+  }
+
+  toggleSelect(rowId: any) {
+    const s = this.state.selected;
+    if (s.has(rowId)) s.delete(rowId);
+    else s.add(rowId);
+  }
+
+  clearSelection() {
+    this.state.selected.clear();
+  }
+
+  selectAllCurrentPage(getId: (row: T) => any = (r) => (r as any).id) {
+    this.state.items.forEach((r) => this.state.selected.add(getId(r)));
+  }
+
+  // --------- CARGA DE DATOS ---------
   async load(): Promise<void> {
     const { loadMode } = this.options;
-    this.state.loading = true; this.state.error = undefined;
-    try { if (loadMode === 'local') return await this.loadLocal(); else return await this.loadRemote(); }
-    catch (e: any) { this.state.error = e?.message ?? 'Error al cargar'; }
-    finally { this.state.loading = false; this.state.ready = true; }
-    this.reflow(); // asegura visibilidad coherente tras cargar
+
+    this.state.loading = true;
+    this.state.error = undefined;
+
+    try {
+      if (loadMode === 'local') {
+        await this.loadLocal();
+      } else {
+        await this.loadRemote();
+      }
+
+      // Después de tener items, recalculamos visibilidad de columnas
+      this.reflow();
+    } catch (e: any) {
+      this.state.error = e?.message ?? 'Error al cargar';
+    } finally {
+      this.state.loading = false;
+      this.state.ready = true;
+    }
   }
 
   private async loadRemote() {
@@ -244,14 +318,20 @@ export class DataTableManager<T extends { id?: any } = any> {
     const data = this.options.data ?? [];
     let rows = [...data];
 
+    // Filtros locales
     for (const f of this.state.filters) {
       const col = f.columnId ? this.getColumn(f.columnId) : undefined;
       rows = rows.filter((r) => {
-        const value = col ? (col.accessor ? col.accessor(r) : (r as any)[col.id]) : (r as any);
+        const value = col
+          ? col.accessor
+            ? col.accessor(r)
+            : (r as any)[col.id]
+          : (r as any);
         return applyFilterOp(value, f.op, f.value);
       });
     }
 
+    // Orden
     if (this.state.sortBy && this.state.sortDir) {
       const col = this.getColumn(this.state.sortBy);
       rows.sort((a, b) => {
@@ -262,6 +342,7 @@ export class DataTableManager<T extends { id?: any } = any> {
       });
     }
 
+    // Paginación
     const start = (this.state.page - 1) * this.state.perPage;
     const end = start + this.state.perPage;
 
