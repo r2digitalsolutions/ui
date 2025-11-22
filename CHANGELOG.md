@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.27.1
+
+### Patch Changes
+
+- aa39487: fix: update versions
+
 ## 0.27.0
 
 ### Minor Changes
