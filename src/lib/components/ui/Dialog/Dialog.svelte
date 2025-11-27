@@ -82,7 +82,7 @@
 	>
 		<div
 			class={[
-				'flex max-h-[min(90vh,700px)] flex-col overflow-hidden',
+				'flex flex-col overflow-hidden',
 				STYLES.SHELL_TRANSPARENT,
 				paddings[effectivePadding],
 				sizes[effectiveSize],
