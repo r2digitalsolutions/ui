@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.27.2
+
+### Patch Changes
+
+- adc6ae4: fix: version and modal
+
 ## 0.27.1
 
 ### Patch Changes
