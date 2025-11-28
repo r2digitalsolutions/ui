@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.27.3
+
+### Patch Changes
+
+- 88fe491: fix: dialog height
+
 ## 0.27.2
 
 ### Patch Changes
