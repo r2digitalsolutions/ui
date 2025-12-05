@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.28.0
+
+### Minor Changes
+
+- d221e42: feat: add datatableshell
+
 ## 0.27.4
 
 ### Patch Changes
