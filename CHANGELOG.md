@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.28.3
+
+### Patch Changes
+
+- 106fdce: fix: data
+
 ## 0.28.2
 
 ### Patch Changes
