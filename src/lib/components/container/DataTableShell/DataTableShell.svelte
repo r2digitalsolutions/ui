@@ -251,12 +251,12 @@
 		<div class="min-w-full">
 			<!-- HEADER -->
 			<div
-				class="sticky top-0 z-10 border-b border-neutral-200/80 bg-gradient-to-br from-neutral-100/95 via-neutral-50/95 to-neutral-100/95 text-[11px] tracking-wide text-neutral-500 uppercase backdrop-blur-xl dark:border-neutral-800/80 dark:bg-gradient-to-br dark:from-neutral-950/95 dark:via-neutral-950/95 dark:to-neutral-900/95 dark:text-neutral-400"
+				class="sticky top-0 z-10 border-b border-neutral-200/80 bg-neutral-50/95 text-[11px] tracking-wide text-neutral-500 uppercase backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-950/95 dark:text-neutral-400"
 			>
-				<div class="grid items-center gap-0" style={`grid-template-columns:${gridTemplate}`}>
+				<div class="grid w-max items-center gap-0" style={`grid-template-columns:${gridTemplate}`}>
 					{#if controller.multiSelect}
 						<div
-							class={`sticky top-0 left-0 z-20 flex items-center justify-center border-r border-neutral-200/60 bg-neutral-100/95 px-2 ${
+							class={`sticky top-0 left-0 z-20 flex items-center justify-center border-r border-neutral-200/60 bg-neutral-50/95 px-2 ${
 								density === 'compact' ? 'py-1.5' : 'py-2.5'
 							} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
 						>
@@ -279,7 +279,7 @@
 								density === 'compact' ? 'py-1.5' : 'py-2.5'
 							} text-left text-[11px] font-semibold text-neutral-600 dark:border-neutral-800/70 dark:text-neutral-300 ${
 								col.sticky === 'left'
-									? 'z-10 bg-neutral-100/95 shadow-[1px_0_0_rgba(15,23,42,0.15)] backdrop-blur-xl dark:bg-neutral-950/95'
+									? 'z-10 bg-neutral-50/95 shadow-[1px_0_0_rgba(15,23,42,0.15)] backdrop-blur-xl dark:bg-neutral-950/95'
 									: ''
 							}`}
 							style={col.sticky === 'left' && sticky?.left !== undefined
@@ -334,7 +334,7 @@
 					{/each}
 
 					<div
-						class={`sticky top-0 right-0 z-20 flex items-center justify-end border-l border-neutral-200/60 bg-neutral-100/95 px-2 ${
+						class={`sticky top-0 right-0 z-20 flex items-center justify-end border-l border-neutral-200/60 bg-neutral-50/95 px-2 ${
 							density === 'compact' ? 'py-1.5' : 'py-2.5'
 						} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
 					></div>
@@ -344,18 +344,18 @@
 			<!-- BODY -->
 			{#if controller.currentRows.length}
 				{#if viewMode === 'list'}
-					<div class="divide-y divide-neutral-200/80 dark:divide-neutral-800/80">
+					<div class="bg-white dark:bg-neutral-950">
 						{#each controller.currentRows as row, index (rowIdFor(row, index))}
 							{@const id = rowIdFor(row, index)}
 
 							<div class="group relative">
-								<!-- Fila principal como GRID (aquí va el background) -->
+								<!-- Fila principal -->
 								<div
 									role="row"
 									tabindex="0"
-									class={`relative grid items-stretch bg-neutral-50/60 text-xs text-neutral-800 transition-colors odd:bg-neutral-50/70 even:bg-neutral-100/60 hover:bg-neutral-100/90 dark:bg-neutral-950/70 dark:text-neutral-100 dark:odd:bg-neutral-950/70 dark:even:bg-neutral-900/70 dark:hover:bg-neutral-900/80 ${
+									class={`relative grid w-max items-stretch border-b border-neutral-200/80 bg-white text-xs text-neutral-800 transition-colors even:bg-neutral-50 hover:bg-neutral-100 dark:border-neutral-800/80 dark:bg-neutral-950 dark:even:bg-neutral-900 dark:hover:bg-neutral-900 ${
 										controller.selectedIds.has(id)
-											? 'bg-purple-50/60 ring-1 ring-purple-400/60 dark:bg-purple-950/25'
+											? 'bg-purple-50/60 ring-1 ring-purple-400/60 hover:bg-purple-50/60 dark:bg-purple-950/25 dark:hover:bg-purple-950/25'
 											: ''
 									}`}
 									style={`grid-template-columns:${gridTemplate}`}
@@ -364,7 +364,7 @@
 								>
 									{#if controller.multiSelect}
 										<div
-											class={`sticky left-0 z-10 flex items-center justify-center border-r border-neutral-200/60 bg-neutral-50/95 px-2 ${
+											class={`sticky left-0 z-10 flex items-center justify-center border-r border-neutral-200/60 bg-white/95 px-2 ${
 												density === 'compact' ? 'py-1.5' : 'py-2.5'
 											} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
 											data-stop-row-toggle="true"
@@ -386,7 +386,7 @@
 												density === 'compact' ? 'py-1.5' : 'py-2.5'
 											} dark:border-neutral-800/70 ${
 												col.sticky === 'left'
-													? 'z-[5] bg-neutral-50/95 shadow-[1px_0_0_rgba(15,23,42,0.10)] backdrop-blur-xl dark:bg-neutral-950/95'
+													? 'z-[5] bg-white/95 shadow-[1px_0_0_rgba(15,23,42,0.10)] backdrop-blur-xl dark:bg-neutral-950/95'
 													: ''
 											}`}
 											style={col.sticky === 'left' && sticky?.left !== undefined
@@ -417,7 +417,7 @@
 									{/each}
 
 									<div
-										class={`sticky right-0 z-10 flex items-center justify-end border-l border-neutral-200/60 bg-neutral-50/95 px-2 ${
+										class={`sticky right-0 z-10 flex items-center justify-end border-l border-neutral-200/60 bg-white/95 px-2 ${
 											density === 'compact' ? 'py-1.5' : 'py-2.5'
 										} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
 										data-stop-row-toggle="true"
@@ -456,7 +456,7 @@
 
 								{#if controller.overflowColumns.length}
 									<div
-										class="border-t border-dashed border-neutral-200/70 bg-neutral-50/80 px-3 py-2 text-[11px] text-neutral-600 dark:border-neutral-800/70 dark:bg-neutral-950/60 dark:text-neutral-300"
+										class="border-b border-dashed border-neutral-200/70 bg-white px-3 py-2 text-[11px] text-neutral-600 dark:border-neutral-800/70 dark:bg-neutral-950 dark:text-neutral-300"
 									>
 										{#if overflow}
 											{@render overflow(row)}
@@ -484,7 +484,7 @@
 
 								{#if rowCollapse && openRows.has(id)}
 									<div
-										class="border-t border-dashed border-neutral-200/70 bg-neutral-50/90 px-3 py-3 text-[11px] text-neutral-700 dark:border-neutral-800/70 dark:bg-neutral-950/70 dark:text-neutral-100"
+										class="border-b border-dashed border-neutral-200/70 bg-white px-3 py-3 text-[11px] text-neutral-700 dark:border-neutral-800/70 dark:bg-neutral-950 dark:text-neutral-100"
 									>
 										{@render rowCollapse(row)}
 									</div>
