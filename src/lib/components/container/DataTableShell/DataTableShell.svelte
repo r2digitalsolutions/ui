@@ -347,19 +347,19 @@
 					<div class="divide-y divide-neutral-200/80 dark:divide-neutral-800/80">
 						{#each controller.currentRows as row, index (rowIdFor(row, index))}
 							{@const id = rowIdFor(row, index)}
-							<div
-								role="row"
-								tabindex="0"
-								class={`relative bg-neutral-50/60 text-xs text-neutral-800 transition-colors odd:bg-neutral-50/70 even:bg-neutral-100/60 hover:bg-neutral-100/90 dark:bg-neutral-950/70 dark:text-neutral-100 dark:odd:bg-neutral-950/70 dark:even:bg-neutral-900/70 dark:hover:bg-neutral-900/80 ${
-									controller.selectedIds.has(id)
-										? 'bg-purple-50/60 ring-1 ring-purple-400/60 dark:bg-purple-950/25'
-										: ''
-								}`}
-								oncontextmenu={(e) => openContextAt(e, row)}
-							>
+
+							<div class="group relative">
+								<!-- Fila principal como GRID (aquí va el background) -->
 								<div
-									class="grid items-stretch"
+									role="row"
+									tabindex="0"
+									class={`relative grid items-stretch bg-neutral-50/60 text-xs text-neutral-800 transition-colors odd:bg-neutral-50/70 even:bg-neutral-100/60 hover:bg-neutral-100/90 dark:bg-neutral-950/70 dark:text-neutral-100 dark:odd:bg-neutral-950/70 dark:even:bg-neutral-900/70 dark:hover:bg-neutral-900/80 ${
+										controller.selectedIds.has(id)
+											? 'bg-purple-50/60 ring-1 ring-purple-400/60 dark:bg-purple-950/25'
+											: ''
+									}`}
 									style={`grid-template-columns:${gridTemplate}`}
+									oncontextmenu={(e) => openContextAt(e, row)}
 									onclick={(e) => handleRowClick(e, row, index)}
 								>
 									{#if controller.multiSelect}

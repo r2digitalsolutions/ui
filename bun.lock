@@ -33,13 +33,13 @@
         "eslint-plugin-svelte": "3.13.1",
         "globals": "16.5.0",
         "jsdom": "27.2.0",
-        "lucide-svelte": "0.555.0",
+        "lucide-svelte": "0.556.0",
         "prettier": "3.7.4",
         "prettier-plugin-svelte": "3.4.0",
         "prettier-plugin-tailwindcss": "0.7.2",
         "publint": "0.3.15",
         "storybook": "10.1.4",
-        "svelte": "5.45.5",
+        "svelte": "5.45.6",
         "svelte-check": "4.3.4",
         "tailwindcss": "4.1.17",
         "typescript": "5.9.3",
@@ -725,7 +725,7 @@
 
     "lru-cache": ["lru-cache@11.2.2", "", {}, "sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg=="],
 
-    "lucide-svelte": ["lucide-svelte@0.555.0", "", { "peerDependencies": { "svelte": "^3 || ^4 || ^5.0.0-next.42" } }, "sha512-2kWIcstKGgQObLGpYXmcYwm/Y83Am+AQcP7MnybrmaRU1+QUJ/WSEpv/wAbwaSkrWUiN1TX/9FuWQKLeEeWCrQ=="],
+    "lucide-svelte": ["lucide-svelte@0.556.0", "", { "peerDependencies": { "svelte": "^3 || ^4 || ^5.0.0-next.42" } }, "sha512-OUj2xk403WslZAIGnEF5wvw/A7QAUXebDWNFajU/INY9XPWRZZZdcr+h6zB6XAzd84F7lPZqiEi42JVjXtcBYw=="],
 
     "lz-string": ["lz-string@1.5.0", "", { "bin": { "lz-string": "bin/bin.js" } }, "sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ=="],
 
