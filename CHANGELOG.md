@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.28.4
+
+### Patch Changes
+
+- af11451: fix: table
+
 ## 0.28.3
 
 ### Patch Changes
