@@ -251,94 +251,89 @@
 		<div class="min-w-full">
 			<!-- HEADER -->
 			<div
-				class="sticky top-0 z-10 border-b border-neutral-200/80 bg-neutral-50/95 text-[11px] tracking-wide text-neutral-500 uppercase backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-950/95 dark:text-neutral-400"
+				class="sticky top-0 z-10 grid w-max items-center gap-0 border-b border-neutral-200/80 bg-neutral-50/95 text-[11px] tracking-wide text-neutral-500 uppercase backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-950/95 dark:text-neutral-400"
+				style={`grid-template-columns:${gridTemplate}`}
 			>
-				<div class="grid w-max items-center gap-0" style={`grid-template-columns:${gridTemplate}`}>
-					{#if controller.multiSelect}
-						<div
-							class={`sticky top-0 left-0 z-20 flex items-center justify-center border-r border-neutral-200/60 bg-neutral-50/95 px-2 ${
-								density === 'compact' ? 'py-1.5' : 'py-2.5'
-							} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
-						>
-							<input
-								type="checkbox"
-								bind:this={selectAllEl}
-								onchange={handleToggleAll}
-								class="h-3.5 w-3.5 rounded border-neutral-300 bg-neutral-50 text-purple-500 focus:ring-purple-500 dark:border-neutral-600 dark:bg-neutral-900"
-								data-stop-row-toggle="true"
-							/>
-						</div>
-					{/if}
+				{#if controller.multiSelect}
+					<div
+						class={`sticky top-0 left-0 z-20 flex items-center justify-center border-r border-neutral-200/60 bg-neutral-50/95 px-2 ${
+							density === 'compact' ? 'py-1.5' : 'py-2.5'
+						} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
+					>
+						<input
+							type="checkbox"
+							bind:this={selectAllEl}
+							onchange={handleToggleAll}
+							class="h-3.5 w-3.5 rounded border-neutral-300 bg-neutral-50 text-purple-500 focus:ring-purple-500 dark:border-neutral-600 dark:bg-neutral-900"
+							data-stop-row-toggle="true"
+						/>
+					</div>
+				{/if}
 
-					{#each controller.mainColumns as col (col.id)}
-						{@const sticky = stickyOffsets[col.id as keyof T]}
+				{#each controller.mainColumns as col (col.id)}
+					{@const sticky = stickyOffsets[col.id as keyof T]}
+					<div
+						role="columnheader"
+						tabindex="0"
+						class={`relative flex items-center border-r border-neutral-200/60 px-3 ${
+							density === 'compact' ? 'py-1.5' : 'py-2.5'
+						} text-left text-[11px] font-semibold text-neutral-600 dark:border-neutral-800/70 dark:text-neutral-300 ${
+							col.sticky === 'left'
+								? 'z-10 bg-neutral-50/95 shadow-[1px_0_0_rgba(15,23,42,0.15)] backdrop-blur-xl dark:bg-neutral-950/95'
+								: ''
+						}`}
+						style={col.sticky === 'left' && sticky?.left !== undefined
+							? `position: sticky; left: ${sticky.left}px; top: 0;`
+							: ''}
+						ondblclick={() => col.sortable && controller.toggleSort(col.id as keyof T)}
+					>
+						<button
+							type="button"
+							class="flex w-full items-center justify-between gap-1"
+							onclick={() => col.sortable && controller.toggleSort(col.id as keyof T)}
+							data-stop-row-toggle="true"
+						>
+							{#if headerCell}
+								{@render headerCell(col)}
+							{:else}
+								<span class="line-clamp-1">{col.label}</span>
+							{/if}
+							{#if col.sortable}
+								<span
+									class={`text-[9px] ${
+										controller.sortColumn === col.id
+											? 'text-purple-500'
+											: 'text-neutral-300 dark:text-neutral-600'
+									}`}
+								>
+									{#if controller.sortColumn === col.id}
+										{controller.sortDirection === 'asc' ? '▲' : '▼'}
+									{:else}
+										↕
+									{/if}
+								</span>
+							{/if}
+						</button>
 						<div
 							role="columnheader"
 							tabindex="0"
-							class={`relative flex items-center border-r border-neutral-200/60 px-3 ${
-								density === 'compact' ? 'py-1.5' : 'py-2.5'
-							} text-left text-[11px] font-semibold text-neutral-600 dark:border-neutral-800/70 dark:text-neutral-300 ${
-								col.sticky === 'left'
-									? 'z-10 bg-neutral-50/95 shadow-[1px_0_0_rgba(15,23,42,0.15)] backdrop-blur-xl dark:bg-neutral-950/95'
-									: ''
-							}`}
-							style={col.sticky === 'left' && sticky?.left !== undefined
-								? `position: sticky; left: ${sticky.left}px; top: 0;`
-								: ''}
-							ondblclick={() => col.sortable && controller.toggleSort(col.id as keyof T)}
+							class="absolute inset-y-1 right-0 flex w-2 cursor-col-resize items-center justify-end"
+							onmousedown={(e) =>
+								onResizeDown(e, col.id as keyof T, e.currentTarget.parentElement as HTMLDivElement)}
+							data-stop-row-toggle="true"
 						>
-							<button
-								type="button"
-								class="flex w-full items-center justify-between gap-1"
-								onclick={() => col.sortable && controller.toggleSort(col.id as keyof T)}
-								data-stop-row-toggle="true"
-							>
-								{#if headerCell}
-									{@render headerCell(col)}
-								{:else}
-									<span class="line-clamp-1">{col.label}</span>
-								{/if}
-								{#if col.sortable}
-									<span
-										class={`text-[9px] ${
-											controller.sortColumn === col.id
-												? 'text-purple-500'
-												: 'text-neutral-300 dark:text-neutral-600'
-										}`}
-									>
-										{#if controller.sortColumn === col.id}
-											{controller.sortDirection === 'asc' ? '▲' : '▼'}
-										{:else}
-											↕
-										{/if}
-									</span>
-								{/if}
-							</button>
 							<div
-								role="columnheader"
-								tabindex="0"
-								class="absolute inset-y-1 right-0 flex w-2 cursor-col-resize items-center justify-end"
-								onmousedown={(e) =>
-									onResizeDown(
-										e,
-										col.id as keyof T,
-										e.currentTarget.parentElement as HTMLDivElement
-									)}
-								data-stop-row-toggle="true"
-							>
-								<div
-									class="h-6 w-[2px] rounded-full bg-neutral-200 hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-400"
-								></div>
-							</div>
+								class="h-6 w-[2px] rounded-full bg-neutral-200 hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-400"
+							></div>
 						</div>
-					{/each}
+					</div>
+				{/each}
 
-					<div
-						class={`sticky top-0 right-0 z-20 flex items-center justify-end border-l border-neutral-200/60 bg-neutral-50/95 px-2 ${
-							density === 'compact' ? 'py-1.5' : 'py-2.5'
-						} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
-					></div>
-				</div>
+				<div
+					class={`sticky top-0 right-0 z-20 flex items-center justify-end border-l border-neutral-200/60 bg-neutral-50/95 px-2 ${
+						density === 'compact' ? 'py-1.5' : 'py-2.5'
+					} backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/95`}
+				></div>
 			</div>
 
 			<!-- BODY -->
