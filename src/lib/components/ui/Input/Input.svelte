@@ -27,7 +27,17 @@
 		}
 	}}
 	class={[
-		'block h-12 w-full rounded-lg border border-gray-300 px-2 py-3 font-normal transition-colors placeholder:text-gray-400 read-only:border-gray-300 read-only:bg-gray-200 read-only:text-gray-500 focus:border-transparent focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-900 read-only:dark:border-neutral-700 read-only:dark:bg-neutral-800 read-only:dark:text-gray-400 dark:focus:ring-offset-gray-800',
+		'block h-12 w-full rounded-lg px-3 py-2 text-sm transition-colors outline-none',
+		'border border-neutral-300 bg-neutral-50 text-neutral-900 placeholder:text-neutral-400',
+		'hover:border-neutral-400',
+		'focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30',
+		'disabled:cursor-not-allowed disabled:opacity-50',
+		'read-only:border-neutral-300 read-only:bg-neutral-100 read-only:text-neutral-500',
+		'dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500',
+		'dark:hover:border-neutral-600',
+		'dark:focus:border-purple-400 dark:focus:ring-purple-400/30',
+		'dark:read-only:border-neutral-700 dark:read-only:bg-neutral-800 dark:read-only:text-neutral-400',
+
 		props.class
 	]}
 />

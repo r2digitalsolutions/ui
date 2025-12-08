@@ -179,18 +179,17 @@
 			<div class="relative">
 				<Input
 					type="search"
-					class="w-full"
+					class="w-full pl-8"
 					placeholder="Buscar..."
 					name="search"
 					autofocus
 					value={search}
 					oninput={(e) => (search = e.currentTarget.value)}
 				/>
-				<div class="top absolute left-2">
+				<div class="top absolute top-0 bottom-0 left-2 flex items-center justify-center">
 					<Search class="h-4 w-4 text-neutral-400" />
 				</div>
 			</div>
-
 			{#if multiple}
 				<div
 					class="flex items-center justify-between text-[11px] text-neutral-500 dark:text-neutral-400"
