@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.29.1
+
+### Patch Changes
+
+- d3f435e: fix
+
 ## 0.29.0
 
 ### Minor Changes
