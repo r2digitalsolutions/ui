@@ -1,5 +1,15 @@
 # @r2digisolutions/ui
 
+## 0.29.0
+
+### Minor Changes
+
+- 0f1623d: feat: select multiple component
+
+### Patch Changes
+
+- 70c038a: chrore: update version
+
 ## 0.28.4
 
 ### Patch Changes
