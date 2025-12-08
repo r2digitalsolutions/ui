@@ -30,7 +30,8 @@
 		white: `${type}-white text-black`,
 		info: `${type}-blue-500 text-whit`,
 		outline: `${type}-gray-200 text-gray-800`,
-		default: `${type}-gray-800 text-white`
+		default: `${type}-gray-800 text-white`,
+		indigo: `${type}-indigo-500 text-white`
 	});
 
 	const variants: Record<typeof variant, string> = $derived({

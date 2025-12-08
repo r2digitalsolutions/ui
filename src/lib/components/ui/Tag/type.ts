@@ -5,7 +5,7 @@ export interface Props {
 	onclick?(): void;
 	href?: string;
 	variant?: 'solid' | 'outline';
-	color?: 'primary' | 'secondary' | 'danger' | 'white' | 'teal' | 'info' | 'outline' | 'default';
+	color?: 'primary' | 'secondary' | 'danger' | 'white' | 'teal' | 'info' | 'outline' | 'default' | 'indigo';
 	shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 	onclose?(): void;
 	class?: ClassValue;
