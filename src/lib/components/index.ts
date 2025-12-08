@@ -23,8 +23,10 @@ import NoContent from './ui/NoContent/NoContent.svelte';
 import Tag from './ui/Tag/Tag.svelte';
 export * from './ui/Dialog/index.js';
 import Selector from './ui/Selector/Selector.svelte';
+import SelectTile from './ui/SelectTile/SelectTile.svelte';
 
 export {
+  SelectTile,
   Selector,
   Tag,
   NoContent,
