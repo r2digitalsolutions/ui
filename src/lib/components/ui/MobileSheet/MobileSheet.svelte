@@ -230,68 +230,77 @@
 </script>
 
 {#if props.open}
-	<div class="fixed inset-0 z-99 flex flex-col md:hidden">
-		<!-- Overlay -->
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			in:fade={{ duration: 150 }}
-			out:fade={{ duration: 120 }}
-			class={['flex-1 bg-neutral-950/70 backdrop-blur-sm', props.overlayClass ?? '']}
-			onclick={handleOverlayClick}
-		></div>
+	<div class="fixed inset-0 z-99 overflow-hidden md:hidden">
+		<!-- Underlay global con blur (cubre TODO, también debajo del sheet) -->
+		<div class="pointer-events-none absolute inset-0 bg-neutral-950/55 backdrop-blur-sm"></div>
 
-		<!-- Panel -->
-		<div
-			role="dialog"
-			aria-modal="true"
-			in:slide={{ duration: 220, easing: cubicOut }}
-			out:slide={{ duration: 190, easing: cubicIn }}
-			class={[
-				'relative w-full overflow-hidden rounded-t-3xl border-t border-neutral-800/70 bg-neutral-950/95 text-neutral-50 shadow-[0_-18px_45px_rgba(0,0,0,0.7)]',
-				props.panelClass ?? ''
-			]}
-			style={`max-height:${props.maxHeight ?? '80vh'};height:${currentHeight * 100}vh;`}
-		>
-			<div class={['flex h-full flex-col', isOpening ? 'sheet-inner-opening' : '']}>
-				<!-- Handle drag -->
-				<div
-					class="flex items-center justify-center pt-2 pb-1 select-none"
-					style="touch-action:none;"
-					onpointerdown={onHandlePointerDown}
-				>
+		<!-- Contenedor real del overlay clicable + sheet -->
+		<div class="relative flex h-full flex-col">
+			<!-- Overlay superior clicable -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+				in:fade={{ duration: 150 }}
+				out:fade={{ duration: 120 }}
+				class={['flex-1', props.overlayClass ?? '']}
+				onclick={handleOverlayClick}
+			></div>
+
+			<!-- Panel -->
+			<div
+				role="dialog"
+				aria-modal="true"
+				in:slide={{ duration: 220, easing: cubicOut }}
+				out:slide={{ duration: 190, easing: cubicIn }}
+				class={[
+					'relative z-10 w-full overflow-hidden rounded-t-3xl border-t border-neutral-800/70',
+					// fondo ligeramente menos transparente y con un blur suave propio
+					'bg-neutral-950/90 backdrop-blur-[2px]',
+					'shadow-[0_-18px_45px_rgba(0,0,0,0.7)]',
+					props.panelClass ?? ''
+				]}
+				style={`max-height:${props.maxHeight ?? '80vh'};height:${currentHeight * 100}vh;`}
+			>
+				<div class={['flex h-full flex-col', isOpening ? 'sheet-inner-opening' : '']}>
+					<!-- Handle drag -->
 					<div
-						class="h-1.5 w-10 rounded-full bg-neutral-700/80 transition-transform duration-150"
-						style={`transform: translateY(${handleOffset}px) scaleX(${
-							1 + handleStretch
-						}); opacity:${0.9 - handleStretch * 0.3};`}
-					></div>
-				</div>
-
-				<!-- Header opcional -->
-				{#if props.header}
-					<div class="px-4 pb-2">
-						{@render props.header(sheetContext)}
+						class="flex items-center justify-center pt-2 pb-1 select-none"
+						style="touch-action:none;"
+						onpointerdown={onHandlePointerDown}
+					>
+						<div
+							class="h-1.5 w-10 rounded-full bg-neutral-700/80 transition-transform duration-150"
+							style={`transform: translateY(${handleOffset}px) scaleX(${
+								1 + handleStretch
+							}); opacity:${0.9 - handleStretch * 0.3};`}
+						></div>
 					</div>
-				{/if}
 
-				<!-- Body -->
-				<div class="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3">
-					{#if props.content}
-						<div class="min-h-0 flex-1 overflow-y-auto">
-							{@render props.content(sheetContext)}
+					<!-- Header opcional -->
+					{#if props.header}
+						<div class="px-4 pb-2">
+							{@render props.header(sheetContext)}
+						</div>
+					{/if}
+
+					<!-- Body -->
+					<div class="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3">
+						{#if props.content}
+							<div class="min-h-0 flex-1 overflow-y-auto">
+								{@render props.content(sheetContext)}
+							</div>
+						{/if}
+					</div>
+
+					<!-- Footer -->
+					{#if props.footer}
+						<div
+							class="border-t border-neutral-800/70 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
+						>
+							{@render props.footer(sheetContext)}
 						</div>
 					{/if}
 				</div>
-
-				<!-- Footer siempre abajo, con pequeño safe-area -->
-				{#if props.footer}
-					<div
-						class="border-t border-neutral-800/70 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
-					>
-						{@render props.footer(sheetContext)}
-					</div>
-				{/if}
 			</div>
 		</div>
 	</div>
