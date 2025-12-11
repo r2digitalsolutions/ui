@@ -24,8 +24,10 @@ import Tag from './ui/Tag/Tag.svelte';
 export * from './ui/Dialog/index.js';
 import Selector from './ui/Selector/Selector.svelte';
 import SelectTile from './ui/SelectTile/SelectTile.svelte';
+import MobileSheet from './ui/MobileSheet/MobileSheet.svelte';
 
 export {
+  MobileSheet,
   SelectTile,
   Selector,
   Tag,
