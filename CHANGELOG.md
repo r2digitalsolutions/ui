@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.31.1
+
+### Patch Changes
+
+- 782f9db: fix: sheet
+
 ## 0.31.0
 
 ### Minor Changes
