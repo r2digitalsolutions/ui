@@ -33,13 +33,13 @@
 	};
 
 	const base =
-		'relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap select-none transition-all ' +
+		'relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap select-none transition-all duration-150 ' +
 		'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60';
 
 	const disabledCls = disabled ? 'opacity-50 pointer-events-none' : 'cursor-pointer';
 
 	const inactive =
-		'text-neutral-700 hover:bg-white/55 hover:text-neutral-900 ' +
+		'text-neutral-700 hover:bg-white/70 hover:text-neutral-900 ' +
 		'dark:text-neutral-200 dark:hover:bg-white/10 dark:hover:text-neutral-50';
 
 	const activeCls =
@@ -56,10 +56,19 @@
 			base,
 			sizes[size],
 			active ? activeCls : inactive,
-			// 🎯 SOLO CSS: posición automática
+
+			// ===== ACTIVE radius =====
 			'[&[data-active]:first-child]:rounded-l-full',
 			'[&[data-active]:last-child]:rounded-r-full',
-			'[&[data-active]:not(:first-child):not(:last-child)]:rounded-full',
+			// middle: SIN rounded
+			'[&[data-active]:not(:first-child):not(:last-child)]:rounded-none',
+
+			// ===== HOVER radius (solo si NO está activo) =====
+			'[&:not([data-active]):first-child:hover]:rounded-l-full',
+			'[&:not([data-active]):last-child:hover]:rounded-r-full',
+			// middle hover: SIN rounded
+			'[&:not([data-active]):not(:first-child):not(:last-child):hover]:rounded-none',
+
 			disabledCls,
 			props.class
 		]}
@@ -77,9 +86,15 @@
 			base,
 			sizes[size],
 			active ? activeCls : inactive,
+
 			'[&[data-active]:first-child]:rounded-l-full',
 			'[&[data-active]:last-child]:rounded-r-full',
-			'[&[data-active]:not(:first-child):not(:last-child)]:rounded-full',
+			'[&[data-active]:not(:first-child):not(:last-child)]:rounded-none',
+
+			'[&:not([data-active]):first-child:hover]:rounded-l-full',
+			'[&:not([data-active]):last-child:hover]:rounded-r-full',
+			'[&:not([data-active]):not(:first-child):not(:last-child):hover]:rounded-none',
+
 			disabledCls,
 			props.class
 		]}
