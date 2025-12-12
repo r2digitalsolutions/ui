@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.32.2
+
+### Patch Changes
+
+- 838c3b4: fix: dock
+
 ## 0.32.1
 
 ### Patch Changes
