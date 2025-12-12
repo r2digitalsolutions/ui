@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.32.0
+
+### Minor Changes
+
+- 7893a50: feat: add dock
+
 ## 0.31.1
 
 ### Patch Changes
