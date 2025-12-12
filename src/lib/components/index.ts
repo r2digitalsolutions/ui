@@ -25,8 +25,12 @@ export * from './ui/Dialog/index.js';
 import Selector from './ui/Selector/Selector.svelte';
 import SelectTile from './ui/SelectTile/SelectTile.svelte';
 import MobileSheet from './ui/MobileSheet/MobileSheet.svelte';
+import Dock from './ui/Dock/Dock.svelte';
+import DockItem from './ui/Dock/DockItem.svelte';
 
 export {
+  Dock,
+  DockItem,
   MobileSheet,
   SelectTile,
   Selector,
