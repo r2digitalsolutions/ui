@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.32.3
+
+### Patch Changes
+
+- 6a8c78e: fix: dockitem
+
 ## 0.32.2
 
 ### Patch Changes
