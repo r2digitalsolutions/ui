@@ -47,7 +47,7 @@
 		'dark:bg-neutral-900/80 dark:text-neutral-50 dark:ring-neutral-800/70';
 </script>
 
-{#if as === 'a'}
+{#if as === 'a' || href}
 	<a
 		{href}
 		aria-label={ariaLabel}
