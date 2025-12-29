@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.33.0
+
+### Minor Changes
+
+- ca579af: feat: add tree to select
+
 ## 0.32.3
 
 ### Patch Changes
