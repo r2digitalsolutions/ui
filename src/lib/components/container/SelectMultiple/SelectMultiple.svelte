@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Option, Props } from './type.js';
-	import { BoxSelect, Check, ChevronDown, Save, Search, X, Plus } from 'lucide-svelte';
+	import { BoxSelect, Check, ChevronDown, Save, Search, X, Plus, ChevronLeft } from 'lucide-svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import Tag from '$lib/components/ui/Tag/Tag.svelte';
 	import Dialog from '$lib/components/ui/Dialog/Dialog.svelte';
@@ -25,8 +25,20 @@
 		multiple = true,
 		onConfirm,
 		onCancel,
+		onValueChange, // ✅ NUEVO (para padre “controlado” sin bind)
 		required,
 		errors = [],
+		item,
+
+		tree = false,
+		childrenKey = 'children',
+		selectParents = false,
+		showPathInSearch = true,
+
+		// UX opcional: si single y quieres cerrar al elegir
+		closeOnPick = false,
+
+		debug = false,
 		...props
 	}: Props = $props();
 
@@ -36,39 +48,187 @@
 	let selected_items = $state(new SvelteMap<string, Option>());
 	let pending_selection = $state(new SvelteMap<string, Option>());
 
-	$effect(() => {
-		selected_items = new SvelteMap((value ?? []).map((v) => [v.value, v] as [string, Option]));
-	});
+	let navStack = $state<string[]>([]);
 
-	function openDialog() {
-		pending_selection = new SvelteMap(selected_items);
-		search = '';
-		open = true;
+	const keyOf = (v: unknown) => String(v ?? '').trim();
+	const getChildren = (opt: Option): Option[] => ((opt as any)?.[childrenKey] as Option[]) ?? [];
+	const hasChildren = (opt: Option) => getChildren(opt)?.length > 0;
+
+	function log(...args: any[]) {
+		if (!debug) return;
+		const safe = args.map((a) => {
+			try {
+				return $state.snapshot(a);
+			} catch {
+				return a;
+			}
+		});
+		console.log(`[Select:${name}]`, ...safe);
 	}
 
-	function toggleItem(item: Option) {
-		if (!multiple) {
-			pending_selection = new SvelteMap([[item.value, item]]);
-			confirmSelection();
-			return;
+	// ===== indexado árbol
+	function flattenTree(
+		nodes: Option[],
+		parentValue: string | null,
+		out: Option[] = [],
+		parentBy = new Map<string, string | null>(),
+		childrenBy = new Map<string, string[]>(),
+		byValue = new Map<string, Option>()
+	) {
+		for (const n of nodes ?? []) {
+			const k = keyOf((n as any)?.value);
+			const node: Option = { ...(n as any), value: k };
+
+			byValue.set(k, node);
+			parentBy.set(k, parentValue);
+			out.push(node);
+
+			const children = getChildren(n);
+			if (children?.length) {
+				childrenBy.set(
+					k,
+					children.map((c) => keyOf((c as any)?.value))
+				);
+				flattenTree(children, k, out, parentBy, childrenBy, byValue);
+			}
 		}
+		return { out, parentBy, childrenBy, byValue };
+	}
 
-		const next = new SvelteMap(pending_selection);
+	const treeIndex = $derived.by(() => {
+		const normalized = (options ?? []).map((o) => ({
+			...(o as any),
+			value: keyOf((o as any).value)
+		}));
+		return flattenTree(normalized, null);
+	});
 
-		if (next.has(item.value)) {
-			next.delete(item.value);
-		} else {
-			next.set(item.value, item);
+	const flatOptions = $derived.by(() => treeIndex.out);
+	const byValue = $derived.by(() => treeIndex.byValue);
+	const parentByValue = $derived.by(() => treeIndex.parentBy);
+	const childrenByValue = $derived.by(() => treeIndex.childrenBy);
+
+	function canonical(opt: Option) {
+		const k = keyOf(opt?.value);
+		return byValue.get(k) ?? { ...(opt as any), value: k };
+	}
+
+	function getPathValues(v: string) {
+		const path: string[] = [];
+		let cur: string | null | undefined = v;
+		while (cur) {
+			path.push(cur);
+			cur = parentByValue.get(cur) ?? null;
 		}
+		return path.reverse();
+	}
 
-		pending_selection = next;
+	function getPathLabel(v: string) {
+		const parts = getPathValues(v)
+			.map((pv) => byValue.get(pv)?.label)
+			.filter(Boolean) as string[];
+		return parts.join(' › ');
+	}
+
+	const pendingKeys = $derived.by(() => {
+		const s = new Set<string>();
+		for (const k of pending_selection.keys()) s.add(keyOf(k));
+		return s;
+	});
+
+	// ===== IMPORTANTE:
+	// Solo sincronizamos selected_items con value externo (edit inicial / controlado)
+	$effect(() => {
+		const next = new SvelteMap<string, Option>();
+		for (const v of value ?? []) {
+			const ov =
+				v && typeof v === 'object'
+					? (v as Option)
+					: ({ label: String(v), value: String(v) } as Option);
+			const c = canonical(ov);
+			next.set(keyOf(c.value), c);
+		}
+		selected_items = next;
+	});
+
+	function firstKey(map: SvelteMap<string, Option>) {
+		for (const k of map.keys()) return k;
+		return null;
+	}
+
+	function computeNavStackForSelection(map: SvelteMap<string, Option>) {
+		if (!tree) return [];
+		if (!map.size) return [];
+
+		const k = firstKey(map);
+		if (!k) return [];
+
+		const kk = keyOf(k);
+		const selectedOpt = byValue.get(kk);
+
+		// si no existe en index, no forzamos nav
+		if (!selectedOpt) return [];
+
+		const path = getPathValues(kk);
+
+		// si tiene hijos, abrir dentro del seleccionado
+		if (hasChildren(selectedOpt)) return path;
+
+		// si es leaf, abrir en su padre
+		return path.slice(0, -1);
+	}
+
+	function rebuildMapFromArray(arr: Option[] | undefined) {
+		const next = new SvelteMap<string, Option>();
+		for (const v of arr ?? []) {
+			const c = canonical(v);
+			next.set(keyOf(c.value), c);
+		}
+		return next;
+	}
+
+	function openDialog() {
+		search = '';
+
+		// Abrimos con lo que nos pasa el padre (value) si existe,
+		// si no, con lo último confirmado internamente (selected_items).
+		const base = value?.length ? rebuildMapFromArray(value) : new SvelteMap(selected_items);
+		pending_selection = base;
+		navStack = computeNavStackForSelection(base);
+
+		open = true;
+
+		if (debug) {
+			const k = firstKey(base);
+			log('OPEN', {
+				valueIn: value,
+				pendingKeys: [...base.keys()],
+				selectedKey: k,
+				path: k ? getPathValues(keyOf(k)) : [],
+				navStack,
+				flatTotal: flatOptions.length,
+				byValueSize: byValue.size
+			});
+		}
+	}
+
+	function commitSelection(next: SvelteMap<string, Option>) {
+		const arr = [...next.values()];
+
+		// 1) actualiza el bind interno (si el padre usa bind, perfecto)
+		value = arr;
+
+		// 2) guarda interno
+		selected_items = new SvelteMap(next);
+
+		// 3) callback para padre “controlado” (tu caso real)
+		onValueChange?.(arr);
 	}
 
 	function confirmSelection() {
-		value = [...pending_selection.values()];
-		selected_items = new SvelteMap(pending_selection);
+		commitSelection(pending_selection);
 		open = false;
-		onConfirm?.(value);
+		onConfirm?.([...pending_selection.values()]);
 	}
 
 	function cancelSelection() {
@@ -78,16 +238,59 @@
 	}
 
 	function removeSelected(v: string) {
+		const k = keyOf(v);
 		const next = new SvelteMap(selected_items);
-		next.delete(v);
+		next.delete(k);
+
 		selected_items = next;
 		value = [...selected_items.values()];
+		onValueChange?.([...selected_items.values()]);
 	}
 
+	function enterItem(opt: Option) {
+		navStack = [...navStack, keyOf(opt.value)];
+	}
+
+	function goBack() {
+		navStack = navStack.slice(0, -1);
+	}
+
+	const currentLevelOptions = $derived.by(() => {
+		if (!tree) return (options ?? []).map(canonical);
+
+		const currentParent = navStack.length ? navStack[navStack.length - 1] : null;
+
+		if (!currentParent) {
+			return flatOptions
+				.filter((o) => (parentByValue.get(keyOf(o.value)) ?? null) === null)
+				.map(canonical);
+		}
+
+		const childValues = childrenByValue.get(currentParent) ?? [];
+		return childValues
+			.map((v) => byValue.get(v))
+			.filter(Boolean)
+			.map(canonical) as Option[];
+	});
+
 	const filtered_options = $derived.by(() => {
-		if (!search) return options;
+		if (tree && search) {
+			const term = search.toLowerCase();
+			return flatOptions.map(canonical).filter((opt) => {
+				const labelHit = opt.label.toLowerCase().includes(term);
+				const descHit = (opt.description ?? '').toLowerCase().includes(term);
+				const pathHit = showPathInSearch
+					? getPathLabel(keyOf(opt.value)).toLowerCase().includes(term)
+					: false;
+				return labelHit || descHit || pathHit;
+			});
+		}
+
+		if (tree && !search) return currentLevelOptions;
+
+		if (!search) return (options ?? []).map(canonical);
 		const term = search.toLowerCase();
-		return options.filter((option) => option.label.toLowerCase().includes(term));
+		return (options ?? []).map(canonical).filter((opt) => opt.label.toLowerCase().includes(term));
 	});
 
 	const single_selected: Option | undefined = $derived.by(() => {
@@ -105,6 +308,54 @@
 			return '';
 		}
 	});
+
+	function canSelect(opt: Option) {
+		if (!tree) return true;
+		const has = hasChildren(opt);
+		if (has && !selectParents) return false;
+		return true;
+	}
+
+	function toggleItem(optRaw: Option) {
+		const opt = canonical(optRaw);
+		const k = keyOf(opt.value);
+
+		const selectable = canSelect(opt);
+		const optHasChildren = tree && hasChildren(opt);
+
+		if (!selectable) {
+			if (tree && !search && optHasChildren) enterItem(opt);
+			return;
+		}
+
+		// single
+		if (!multiple) {
+			const next = new SvelteMap<string, Option>([[k, opt]]);
+			pending_selection = next;
+
+			// abrir dentro si tiene hijos
+			navStack = computeNavStackForSelection(next);
+
+			// opcional: commit inmediato
+			if (closeOnPick) {
+				commitSelection(next);
+				open = false;
+				onConfirm?.([...next.values()]);
+			}
+
+			return;
+		}
+
+		// multi
+		const next = new SvelteMap(pending_selection);
+		if (next.has(k)) next.delete(k);
+		else next.set(k, opt);
+		pending_selection = next;
+	}
+
+	function renderLabelLine(opt: Option) {
+		return opt.label;
+	}
 </script>
 
 <div class={['flex w-full flex-col gap-2', props.parentClass].join(' ')}>
@@ -151,15 +402,15 @@
 
 	{#if multiple}
 		<div class="flex flex-wrap gap-1.5">
-			{#each Array.from(selected_items.values()) as item, index (item.value)}
-				<input type="hidden" name="{name}[{index}]" value={item.value} />
+			{#each Array.from(selected_items.values()) as sel, index (sel.value)}
+				<input type="hidden" name="{name}[{index}]" value={sel.value} />
 				<Tag
-					onclose={() => removeSelected(item.value)}
+					onclose={() => removeSelected(sel.value)}
 					variant="solid"
 					color="indigo"
 					class="rounded-full bg-indigo-500/10 text-[11px] text-indigo-700 ring-1 ring-indigo-500/30 dark:bg-indigo-500/15 dark:text-indigo-200"
 				>
-					{item.label}
+					{sel.label}
 				</Tag>
 			{/each}
 		</div>
@@ -190,28 +441,42 @@
 					<Search class="h-4 w-4 text-neutral-400" />
 				</div>
 			</div>
-			{#if multiple}
+
+			{#if tree && !search}
 				<div
-					class="flex items-center justify-between text-[11px] text-neutral-500 dark:text-neutral-400"
+					class="flex items-center justify-between gap-2 text-[11px] text-neutral-500 dark:text-neutral-400"
 				>
-					<span>
-						Seleccionados:
-						<span class="ml-1 font-semibold text-neutral-700 dark:text-neutral-200">
-							{pending_selection.size}
-						</span>
-						{#if options.length}
-							<span class="ml-1 text-neutral-400">/ {options.length}</span>
+					<div class="flex min-w-0 items-center gap-2">
+						{#if navStack.length > 0}
+							<button
+								type="button"
+								class="inline-flex items-center gap-1 rounded-full px-2 py-[2px] hover:bg-neutral-100 dark:hover:bg-neutral-800"
+								onclick={goBack}
+							>
+								<ChevronLeft class="h-3.5 w-3.5" />
+								Atrás
+							</button>
 						{/if}
-					</span>
-					{#if pending_selection.size > 0}
-						<button
-							type="button"
-							class="inline-flex items-center gap-1 rounded-full px-2 py-[2px] text-[11px] text-neutral-500 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-							onclick={() => (pending_selection = new SvelteMap())}
-						>
-							<X class="h-3 w-3" />
-							Limpiar
-						</button>
+
+						<span class="truncate">
+							{#if navStack.length === 0}
+								Raíz
+							{:else}
+								{getPathLabel(navStack[navStack.length - 1])}
+							{/if}
+						</span>
+					</div>
+
+					{#if multiple}
+						<span>
+							Seleccionados:
+							<span class="ml-1 font-semibold text-neutral-700 dark:text-neutral-200"
+								>{pending_selection.size}</span
+							>
+							<span class="ml-1 text-neutral-400"
+								>/ {tree ? flatOptions.length : options.length}</span
+							>
+						</span>
 					{/if}
 				</div>
 			{/if}
@@ -219,77 +484,153 @@
 	</DialogHeader>
 
 	<DialogContent class="max-h-[70dvh] gap-1 py-2">
-		{#each filtered_options as item (item.value)}
+		{#each filtered_options as opt (opt.value)}
+			{@const k = keyOf(opt.value)}
+			{@const optHasChildren = tree && hasChildren(opt)}
+			{@const selected = pendingKeys.has(k)}
+			{@const selectable = canSelect(opt)}
+
 			{#if multiple}
-				<label class="flex flex-row gap-1">
-					<Checkbox
+				<label class="block">
+					<div
 						class={[
-							'group flex items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-sm transition-all',
-							pending_selection.has(item.value)
+							'group flex w-full items-start gap-3 rounded-2xl border px-3.5 py-2.5 text-sm transition-all',
+							selected
 								? 'border-indigo-500/70 bg-indigo-500/8 shadow-sm shadow-indigo-500/20 dark:border-indigo-400/70 dark:bg-indigo-500/10'
-								: 'border-transparent bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/70 dark:hover:bg-neutral-800'
-						]}
-						value={item.value}
-						label={item.label}
-						checked={pending_selection.has(item.value)}
-						onchange={() => toggleItem(item)}
-					/>
-					<div class="flex flex-col">
-						<span>{item.label}</span>
-						{#if item.description}
-							<span
-								class="block text-[11px] text-neutral-500 group-hover:text-neutral-600 dark:text-neutral-400 dark:group-hover:text-neutral-300"
+								: 'border-transparent bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/70 dark:hover:bg-neutral-800',
+							!selectable ? 'opacity-75' : ''
+						].join(' ')}
+					>
+						<Checkbox
+							class="mt-0.5"
+							value={k}
+							label=""
+							checked={selected}
+							onchange={() => toggleItem(opt)}
+						/>
+
+						<div class="flex min-w-0 flex-1 flex-col">
+							{#if item}
+								{@render item(opt)}
+							{:else}
+								<span
+									class="truncate text-[13px] font-medium text-neutral-800 dark:text-neutral-100"
+								>
+									{renderLabelLine(opt)}
+								</span>
+
+								{#if opt.description}
+									<span
+										class="truncate text-[11px] text-neutral-500 group-hover:text-neutral-600 dark:text-neutral-400 dark:group-hover:text-neutral-300"
+									>
+										{opt.description}
+									</span>
+								{/if}
+
+								{#if tree && search && showPathInSearch}
+									<span class="mt-0.5 truncate text-[11px] text-neutral-400">{getPathLabel(k)}</span
+									>
+								{/if}
+
+								{#if tree && !search && optHasChildren}
+									<span class="mt-0.5 truncate text-[11px] text-neutral-400"
+										>{getChildren(opt).length} subcategorías</span
+									>
+								{/if}
+							{/if}
+						</div>
+
+						{#if tree && optHasChildren && !search}
+							<button
+								type="button"
+								class="mt-0.5 inline-flex items-center gap-1 rounded-full px-2 py-[2px] text-[11px] text-neutral-500 hover:bg-neutral-200/70 dark:text-neutral-300 dark:hover:bg-neutral-800"
+								onclick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									enterItem(opt);
+								}}
 							>
-								{item.description}
-							</span>
+								<ChevronDown class="h-3.5 w-3.5 -rotate-90" />
+								Ver
+							</button>
 						{/if}
 					</div>
 				</label>
 			{:else}
 				<button
 					type="button"
-					onclick={() => toggleItem(item)}
+					onclick={() => toggleItem(opt)}
 					class={[
 						'flex w-full cursor-pointer items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-sm transition-all',
-						pending_selection.has(item.value)
+						selected
 							? 'border-indigo-500/70 bg-indigo-500/8 shadow-sm shadow-indigo-500/20 dark:border-indigo-400/70 dark:bg-indigo-500/10'
-							: 'border-transparent bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/70 dark:hover:bg-neutral-800'
+							: 'border-transparent bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/70 dark:hover:bg-neutral-800',
+						!selectable ? 'opacity-75' : ''
 					].join(' ')}
 				>
-					<!-- icono left -->
 					<div
 						class={[
 							'flex h-7 w-7 items-center justify-center rounded-full border text-neutral-500 transition-all',
-							pending_selection.has(item.value)
+							selected
 								? 'border-transparent bg-linear-to-tr from-indigo-500 via-violet-500 to-blue-500 text-white shadow-sm shadow-indigo-500/40'
 								: 'border-neutral-300 bg-white/90 dark:border-neutral-600 dark:bg-neutral-900/90'
 						].join(' ')}
 					>
-						{#if pending_selection.has(item.value)}
+						{#if selected}
 							<Check class="h-3.5 w-3.5" />
 						{:else}
 							<Plus class="h-3.5 w-3.5" />
 						{/if}
 					</div>
 
-					<div class="flex flex-1 flex-col text-left">
-						<span class="text-[13px] font-medium text-neutral-800 dark:text-neutral-100">
-							{item.label}
-						</span>
-						{#if item.description}
-							<span class="text-[11px] text-neutral-500 dark:text-neutral-400">
-								{item.description}
+					<div class="flex min-w-0 flex-1 flex-col text-left">
+						{#if item}
+							{@render item(opt)}
+						{:else}
+							<span class="truncate text-[13px] font-medium text-neutral-800 dark:text-neutral-100">
+								{renderLabelLine(opt)}
 							</span>
+
+							{#if opt.description}
+								<span class="truncate text-[11px] text-neutral-500 dark:text-neutral-400"
+									>{opt.description}</span
+								>
+							{/if}
+
+							{#if tree && search && showPathInSearch}
+								<span class="mt-0.5 truncate text-[11px] text-neutral-400">{getPathLabel(k)}</span>
+							{/if}
+
+							{#if tree && !search && optHasChildren}
+								<span class="mt-0.5 truncate text-[11px] text-neutral-400"
+									>{getChildren(opt).length} subcategorías</span
+								>
+							{/if}
 						{/if}
 					</div>
 
-					{#if pending_selection.has(item.value)}
+					{#if selected}
 						<div
 							class="inline-flex items-center gap-1 rounded-full bg-neutral-900/90 px-2.5 py-[3px] text-[10px] font-medium text-neutral-50 shadow-sm shadow-black/40 dark:bg-neutral-50/95 dark:text-neutral-900"
 						>
 							<Check class="h-3 w-3" />
 							<span>Seleccionado</span>
 						</div>
+					{/if}
+
+					{#if tree && optHasChildren && !search}
+						<button
+							type="button"
+							class="ml-2 inline-flex items-center gap-1 rounded-full px-2 py-[2px] text-[11px] text-neutral-500 hover:bg-neutral-200/70 dark:text-neutral-300 dark:hover:bg-neutral-800"
+							onclick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								enterItem(opt);
+							}}
+						>
+							<ChevronDown class="h-3.5 w-3.5 -rotate-90" />
+							Ver
+						</button>
 					{/if}
 				</button>
 			{/if}
@@ -304,9 +645,7 @@
 
 	<DialogFooter class="flex items-center justify-between gap-2">
 		{#if footerMessage}
-			<div class="text-[11px] text-neutral-500 dark:text-neutral-400">
-				{footerMessage}
-			</div>
+			<div class="text-[11px] text-neutral-500 dark:text-neutral-400">{footerMessage}</div>
 		{/if}
 
 		<div class="ml-auto flex gap-2">
@@ -318,9 +657,7 @@
 				<Save class="h-4 w-4" />
 				{i18n.t('common.confirm')}
 				{#if multiple}
-					<span class="ml-1 text-[11px] tabular-nums">
-						({pending_selection.size})
-					</span>
+					<span class="ml-1 text-[11px] tabular-nums">({pending_selection.size})</span>
 				{/if}
 			</Button>
 		</div>
