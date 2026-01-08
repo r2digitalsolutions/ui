@@ -345,6 +345,7 @@
 
 							<div class="group relative">
 								<!-- Fila principal -->
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<div
 									role="row"
 									tabindex="0"
@@ -377,7 +378,7 @@
 										{@const value = col.accessor ? col.accessor(row) : (row as any)[col.id]}
 										{@const sticky = stickyOffsets[col.id as keyof T]}
 										<div
-											class={`flex items-center border-r border-neutral-200/60 px-3 ${
+											class={`flex items-center border-r border-neutral-200/60 px-3  text-black dark:text-neutral-50${
 												density === 'compact' ? 'py-1.5' : 'py-2.5'
 											} dark:border-neutral-800/70 ${
 												col.sticky === 'left'
@@ -397,7 +398,7 @@
 												})}
 											{:else}
 												<span
-													class={`line-clamp-2 ${
+													class={`line-clamp-2 text-black dark:text-neutral-50 ${
 														col.align === 'right'
 															? 'ml-auto text-right'
 															: col.align === 'center'
@@ -500,6 +501,7 @@
 									: (row as any)[firstCol.id]
 								: null}
 							{@const restCols = cols.slice(1)}
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
 							<div
 								class={`group relative rounded-2xl border border-neutral-200/80 bg-white/80 p-3 text-[11px] text-neutral-800 shadow-sm ring-0 transition-all hover:border-purple-400/70 hover:shadow-md dark:border-neutral-800/80 dark:bg-neutral-900/80 dark:text-neutral-50 ${
 									controller.selectedIds.has(id)
@@ -522,7 +524,7 @@
 									</div>
 								{/if}
 
-								<div class="mb-2 pr-6">
+								<div class="mb-2 pr-6 text-black dark:text-neutral-50">
 									{#if cell && firstCol}
 										{@render cell({
 											row,
