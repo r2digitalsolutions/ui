@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.33.1
+
+### Patch Changes
+
+- e0735dd: fix: table
+
 ## 0.33.0
 
 ### Minor Changes
