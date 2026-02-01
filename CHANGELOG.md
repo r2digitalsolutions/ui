@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.0
+
+### Minor Changes
+
+- 836421c: chore: update versions
+
 ## 0.33.1
 
 ### Patch Changes
