@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.2
+
+### Patch Changes
+
+- 2040cc8: test
+
 ## 0.34.1
 
 ### Patch Changes
