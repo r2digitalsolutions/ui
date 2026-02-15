@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.7
+
+### Patch Changes
+
+- ad0c26b: fix: table
+
 ## 0.34.6
 
 ### Patch Changes
