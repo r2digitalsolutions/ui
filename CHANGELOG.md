@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.1
+
+### Patch Changes
+
+- 93a3671: fix: version
+
 ## 0.34.0
 
 ### Minor Changes
