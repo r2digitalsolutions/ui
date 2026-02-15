@@ -652,7 +652,6 @@
 						{/each}
 					</div>
 				{:else}
-					<!-- GRID VIEW -->
 					<div class="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						{#each controller.currentRows as row, index (rowIdFor(row, index))}
 							{@const id = rowIdFor(row, index)}
