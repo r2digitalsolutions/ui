@@ -1,5 +1,6 @@
 <script lang="ts" generics="T">
 	import type { Snippet } from 'svelte';
+	import { tick } from 'svelte';
 	import { EllipsisVertical, ChevronDown } from 'lucide-svelte';
 	import type { ColumnDef, RowAction } from './core/types.js';
 	import type { DataTableController } from './core/DataTableController.svelte';
@@ -56,9 +57,21 @@
 		{} as Record<keyof T, { left?: number; right?: number }>
 	);
 
+	// CONTEXT MENU
 	let contextPopover = $state<HTMLDivElement | null>(null);
 	let contextRow = $state<T | null>(null);
+
+	// punto preferido donde se abrió (cursor o botón)
 	let contextPos = $state<{ x: number; y: number }>({ x: 0, y: 0 });
+
+	// ✅ posición final render (clamp + flip)
+	let contextRender = $state<{ x: number; y: number; transform: string }>({
+		x: 0,
+		y: 0,
+		transform: 'translate(-100%, 8px)'
+	});
+
+	const CONTEXT_MARGIN = 10;
 
 	let openRows = $state<Set<string>>(new Set());
 
@@ -123,6 +136,22 @@
 		};
 	});
 
+	// ✅ Reposicionar en resize / scroll (capture) mientras esté abierto
+	$effect(() => {
+		if (!contextOpen) return;
+
+		const onWin = () => positionContext();
+
+		window.addEventListener('resize', onWin);
+		// capture: true para enterarte del scroll en contenedores overflow-auto
+		window.addEventListener('scroll', onWin, { passive: true, capture: true });
+
+		return () => {
+			window.removeEventListener('resize', onWin);
+			window.removeEventListener('scroll', onWin, true as any);
+		};
+	});
+
 	let resizingId: keyof T | null = null;
 	let startX = 0;
 	let startWidth = 0;
@@ -165,21 +194,95 @@
 		return String(value);
 	}
 
-	function openContextAt(event: MouseEvent, row: T) {
+	// =========================
+	// ✅ Context positioning logic
+	// =========================
+	function clamp(n: number, min: number, max: number) {
+		return Math.max(min, Math.min(max, n));
+	}
+
+	function computeContextPosition(preferred: { x: number; y: number }, pop: DOMRect) {
+		const vw = window.innerWidth;
+		const vh = window.innerHeight;
+
+		const fitsLeft = preferred.x - pop.width - CONTEXT_MARGIN >= 0;
+		const fitsRight = preferred.x + pop.width + CONTEXT_MARGIN <= vw;
+		const fitsDown = preferred.y + pop.height + CONTEXT_MARGIN <= vh;
+		const fitsUp = preferred.y - pop.height - CONTEXT_MARGIN >= 0;
+
+		// Horizontal: preferimos “a la izquierda” (como translate(-100%, ...))
+		const placeToRight = !fitsLeft && fitsRight;
+
+		// Vertical: preferimos “abajo”
+		const placeUp = !fitsDown && fitsUp;
+
+		let transformX = placeToRight ? '0%' : '-100%';
+		let transformY = placeUp ? 'calc(-100% - 8px)' : '8px';
+
+		let x = preferred.x;
+		let y = preferred.y;
+
+		// Clamp horizontal según transform
+		if (transformX === '-100%') {
+			// pop ocupa [x - w, x]
+			x = clamp(x, CONTEXT_MARGIN + pop.width, vw - CONTEXT_MARGIN);
+		} else {
+			// pop ocupa [x, x + w]
+			x = clamp(x, CONTEXT_MARGIN, vw - CONTEXT_MARGIN - pop.width);
+		}
+
+		// Clamp vertical según lado
+		if (placeUp) {
+			// pop ocupa [y - 8 - h, y - 8]
+			y = clamp(y, CONTEXT_MARGIN + pop.height + 8, vh - CONTEXT_MARGIN);
+		} else {
+			// pop ocupa [y + 8, y + 8 + h]
+			y = clamp(y, CONTEXT_MARGIN - 8, vh - CONTEXT_MARGIN - pop.height - 8);
+		}
+
+		return {
+			x,
+			y,
+			transform: `translate(${transformX}, ${transformY})`
+		};
+	}
+
+	async function positionContext() {
+		if (!contextPopover || !contextRow) return;
+
+		// Si está cerrado, evita medir
+		// (aunque contextRow sea truthy, por seguridad)
+		const rect = contextPopover.getBoundingClientRect();
+		if (!rect.width || !rect.height) return;
+
+		const next = computeContextPosition(contextPos, rect);
+		contextRender = next;
+	}
+
+	async function openContextAt(event: MouseEvent, row: T) {
 		event.preventDefault();
 		event.stopPropagation();
 		contextRow = row;
 		contextPos = { x: event.clientX, y: event.clientY };
 		if (contextPopover) contextPopover.showPopover();
+
+		await tick();
+		await positionContext();
 	}
 
-	function openContextFromButton(event: MouseEvent, row: T) {
+	async function openContextFromButton(event: MouseEvent, row: T) {
 		event.preventDefault();
 		event.stopPropagation();
 		const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
 		contextRow = row;
+
+		// Punto preferido: esquina inferior derecha del botón
 		contextPos = { x: rect.right, y: rect.bottom };
+
 		if (contextPopover) contextPopover.showPopover();
+
+		await tick();
+		await positionContext();
 	}
 
 	function closeContext() {
@@ -613,8 +716,8 @@
 		bind:this={contextPopover}
 		popover="manual"
 		data-context-host="true"
-		class="z-[1300] max-w-xs min-w-[190px] rounded-2xl border border-neutral-200/80 bg-neutral-50/95 p-1.5 text-xs text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-neutral-700/80 dark:bg-neutral-900/95 dark:text-neutral-50"
-		style={`position: fixed; left: ${contextPos.x}px; top: ${contextPos.y}px; transform: translate(-100%, 8px);`}
+		class="z-[1300] max-w-xs min-w-[190px] rounded-2xl border border-neutral-200/80 bg-neutral-50/95 p-1.5 text-xs text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.45)] backdrop-blur-2xl transition-transform duration-75 will-change-transform dark:border-neutral-700/80 dark:bg-neutral-900/95 dark:text-neutral-50"
+		style={`position: fixed; left: ${contextRender.x}px; top: ${contextRender.y}px; transform: ${contextRender.transform};`}
 		onbeforetoggle={(e) => {
 			if ((e as any).newState === 'closed') contextRow = null;
 		}}
