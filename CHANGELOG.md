@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.5
+
+### Patch Changes
+
+- 5183ae1: fix: table
+
 ## 0.34.4
 
 ### Patch Changes
