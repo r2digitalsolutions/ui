@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.8
+
+### Patch Changes
+
+- 352ecce: fix: menu
+
 ## 0.34.7
 
 ### Patch Changes
