@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.3
+
+### Patch Changes
+
+- d757b18: fix: lint
+
 ## 0.34.2
 
 ### Patch Changes
