@@ -93,4 +93,4 @@
 	});
 </script>
 
-<div class="my-200"><DataTableShell {controller} {actions} /></div>
+<div class="h-[1200px] overflow-auto py-200"><DataTableShell {controller} {actions} /></div>

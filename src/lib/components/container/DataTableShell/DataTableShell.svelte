@@ -8,6 +8,7 @@
 	import DataTableToolbar from './components/DataTableToolbar.svelte';
 	import DataTableFooter from './components/DataTableFooter.svelte';
 	import ContextMenu from './components/ContextMenu.svelte';
+	import { portal } from '../DataTable/utils/portal.js';
 
 	interface CellContext<T> {
 		row: T;
@@ -57,23 +58,23 @@
 		{} as Record<keyof T, { left?: number; right?: number }>
 	);
 
-	// =========================
-	// CONTEXT MENU (FIX)
-	// =========================
+	// ✅ el contenedor que scrollea (tu overflow-auto)
+	let scrollEl = $state<HTMLDivElement | null>(null);
+
+	// CONTEXT
 	let contextPopover = $state<HTMLDivElement | null>(null);
 	let contextRow = $state<T | null>(null);
 
-	// Punto preferido: cursor o botón (client coords)
+	// punto donde “quieres” abrirlo (coords de viewport)
 	let contextPos = $state<{ x: number; y: number }>({ x: 0, y: 0 });
 
-	// ✅ Posición final (clamp + flip) en left/top reales
+	// ✅ left/top final (sin transform)
 	let contextRender = $state<{ left: number; top: number }>({ left: 0, top: 0 });
 
 	const CONTEXT_MARGIN = 12;
 	const CONTEXT_GAP = 8;
 
 	let openRows = $state<Set<string>>(new Set());
-
 	const contextOpen = $derived(contextRow !== null);
 
 	// GRID / STICKY
@@ -86,7 +87,6 @@
 			parts.push(`${w}px`);
 		});
 
-		// Columna de acciones
 		parts.push('64px');
 		gridTemplate = parts.join(' ');
 
@@ -98,9 +98,7 @@
 		let accLeft = controller.multiSelect ? 40 : 0;
 		controller.mainColumns.forEach((col) => {
 			const w = controller.getColumnWidth(col.id as keyof T);
-			if (col.sticky === 'left') {
-				offsets[col.id as keyof T] = { left: accLeft };
-			}
+			if (col.sticky === 'left') offsets[col.id as keyof T] = { left: accLeft };
 			accLeft += w;
 		});
 		stickyOffsets = offsets;
@@ -118,45 +116,35 @@
 		selectAllEl.indeterminate = controller.someVisibleSelected;
 	});
 
-	// CERRAR CONTEXT MENU (click fuera)
+	// Cerrar por click fuera
 	$effect(() => {
 		function handleDocumentClick(event: MouseEvent) {
 			if (!contextOpen) return;
 			const target = event.target as HTMLElement;
-			if (!target.closest('[data-context-host="true"]')) {
-				closeContext();
-			}
+			if (!target.closest('[data-context-host="true"]')) closeContext();
 		}
-		if (contextOpen) document.addEventListener('click', handleDocumentClick);
-		return () => {
-			document.removeEventListener('click', handleDocumentClick);
-		};
+		if (contextOpen) document.addEventListener('mousedown', handleDocumentClick, true);
+		return () => document.removeEventListener('mousedown', handleDocumentClick, true);
 	});
 
-	// ✅ Reposicionar al hacer scroll/resize mientras está abierto
+	// ✅ Reposicionar mientras está abierto: window resize + scroll del contenedor REAL
 	$effect(() => {
 		if (!contextOpen) return;
 
-		const handler = () => {
-			// si se mueve el viewport o scroll, recalculamos
-			positionContext();
-		};
+		const handler = () => void positionContext();
 
 		window.addEventListener('resize', handler);
-		window.addEventListener('scroll', handler, { passive: true, capture: true });
 
-		// visualViewport es clave en móviles / zoom / barras
-		window.visualViewport?.addEventListener('resize', handler);
-		window.visualViewport?.addEventListener('scroll', handler);
+		// 👇 ESTE ES el scroll que te estaba faltando
+		scrollEl?.addEventListener('scroll', handler, { passive: true });
 
 		return () => {
 			window.removeEventListener('resize', handler);
-			window.removeEventListener('scroll', handler, true as any);
-			window.visualViewport?.removeEventListener('resize', handler);
-			window.visualViewport?.removeEventListener('scroll', handler);
+			scrollEl?.removeEventListener('scroll', handler as any);
 		};
 	});
 
+	// RESIZE columns
 	let resizingId: keyof T | null = null;
 	let startX = 0;
 	let startWidth = 0;
@@ -174,8 +162,7 @@
 	function onResizeMove(event: MouseEvent) {
 		if (!resizingId) return;
 		const dx = event.clientX - startX;
-		const width = startWidth + dx;
-		controller.resizeColumn(resizingId, width);
+		controller.resizeColumn(resizingId, startWidth + dx);
 	}
 
 	function onResizeUp() {
@@ -216,13 +203,12 @@
 
 	function handleToggleAll(e: Event) {
 		const input = e.currentTarget as HTMLInputElement;
-		const checked = input.checked;
-		if (checked) controller.selectAllCurrentPage();
+		if (input.checked) controller.selectAllCurrentPage();
 		else controller.unselectAllCurrentPage();
 	}
 
 	// =========================
-	// ✅ Positioning helpers
+	// ✅ POSICIONAMIENTO REAL (sin transform)
 	// =========================
 	function clamp(n: number, min: number, max: number) {
 		return Math.max(min, Math.min(max, n));
@@ -234,20 +220,8 @@
 
 	function getViewport() {
 		const vv = window.visualViewport;
-		if (vv) {
-			return {
-				left: vv.offsetLeft,
-				top: vv.offsetTop,
-				width: vv.width,
-				height: vv.height
-			};
-		}
-		return {
-			left: 0,
-			top: 0,
-			width: window.innerWidth,
-			height: window.innerHeight
-		};
+		if (vv) return { left: vv.offsetLeft, top: vv.offsetTop, width: vv.width, height: vv.height };
+		return { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
 	}
 
 	function computeContextPosition(preferred: { x: number; y: number }, pop: DOMRect) {
@@ -259,30 +233,30 @@
 		const maxLeft = vp.left + vp.width - CONTEXT_MARGIN - pop.width;
 		const maxTop = vp.top + vp.height - CONTEXT_MARGIN - pop.height;
 
-		// Si es demasiado alto, lo pegamos arriba (y el popover scrollea)
 		const tooTall = pop.height > vp.height - CONTEXT_MARGIN * 2;
 
-		// Preferencia UX original: izquierda + abajo
+		// default: left + down
 		let left = preferred.x - pop.width;
 		let top = preferred.y + CONTEXT_GAP;
 
-		// Flip horizontal si no cabe a la izquierda
-		if (left < minLeft) {
-			left = preferred.x + CONTEXT_GAP;
-		}
+		// flip horizontal
+		if (left < minLeft) left = preferred.x + CONTEXT_GAP;
 
-		// Flip vertical si no cabe abajo
-		if (!tooTall) {
+		if (tooTall) {
+			// si no cabe en altura, pegado arriba
+			top = minTop;
+		} else {
+			// flip vertical si se sale abajo
 			const bottomIfDown = top + pop.height;
 			const bottomLimit = vp.top + vp.height - CONTEXT_MARGIN;
 			if (bottomIfDown > bottomLimit) {
-				top = preferred.y - CONTEXT_GAP - pop.height;
+				top = preferred.y - CONTEXT_GAP - pop.height; // arriba
 			}
-		} else {
-			top = minTop;
+
+			// si arriba se sale, pegado abajo
+			if (top < minTop) top = maxTop;
 		}
 
-		// Clamp final
 		left = clamp(left, minLeft, Math.max(minLeft, maxLeft));
 		top = clamp(top, minTop, Math.max(minTop, maxTop));
 
@@ -292,21 +266,18 @@
 	async function positionContext() {
 		if (!contextPopover || !contextRow) return;
 
-		// Asegura layout real (Popover API a veces “late layout”)
 		await raf();
+		const r1 = contextPopover.getBoundingClientRect();
+		if (!r1.width || !r1.height) return;
 
-		const rect1 = contextPopover.getBoundingClientRect();
-		if (!rect1.width || !rect1.height) return;
+		contextRender = computeContextPosition(contextPos, r1);
 
-		// 1ª pasada
-		contextRender = computeContextPosition(contextPos, rect1);
-
-		// 2ª pasada (por si cambia alto/ancho por scrollbar)
+		// segunda pasada por scrollbar
 		await raf();
-		const rect2 = contextPopover.getBoundingClientRect();
-		if (!rect2.width || !rect2.height) return;
+		const r2 = contextPopover.getBoundingClientRect();
+		if (!r2.width || !r2.height) return;
 
-		contextRender = computeContextPosition(contextPos, rect2);
+		contextRender = computeContextPosition(contextPos, r2);
 	}
 
 	async function openContextAt(event: MouseEvent, row: T) {
@@ -316,9 +287,6 @@
 		contextRow = row;
 		contextPos = { x: event.clientX, y: event.clientY };
 
-		if (contextPopover) contextPopover.showPopover();
-
-		// Espera render + posiciona
 		await tick();
 		await positionContext();
 	}
@@ -330,23 +298,21 @@
 		const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
 		contextRow = row;
 
-		// Punto preferido: esquina inferior derecha
+		// punto: esquina inferior derecha del botón
 		contextPos = { x: rect.right, y: rect.bottom };
-
-		if (contextPopover) contextPopover.showPopover();
 
 		await tick();
 		await positionContext();
 	}
 
 	function closeContext() {
-		if (contextPopover) contextPopover.hidePopover();
 		contextRow = null;
 	}
 </script>
 
+<!-- ✅ wrapper principal relativo (para z-index) -->
 <div
-	class="flex flex-col overflow-hidden rounded-2xl border border-neutral-200/80 bg-neutral-50/70 text-xs text-neutral-900 shadow-sm backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-neutral-950/70 dark:text-neutral-50"
+	class="relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200/80 bg-neutral-50/70 text-xs text-neutral-900 shadow-sm backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-neutral-950/70 dark:text-neutral-50"
 >
 	<DataTableToolbar
 		{density}
@@ -366,7 +332,8 @@
 		</div>
 	{/if}
 
-	<div class="relative max-h-[70vh] flex-1 overflow-auto">
+	<!-- ✅ ESTE es el scroll container, le hacemos bind -->
+	<div bind:this={scrollEl} class="relative max-h-[70vh] flex-1 overflow-auto">
 		{#if controller.loading}
 			<div class="pointer-events-none absolute inset-0 z-20 bg-neutral-900/30 backdrop-blur-md">
 				<div class="flex h-full items-center justify-center">
@@ -476,8 +443,6 @@
 							{@const id = rowIdFor(row, index)}
 
 							<div class="group relative">
-								<!-- Fila principal -->
-								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<div
 									role="row"
 									tabindex="0"
@@ -522,22 +487,9 @@
 												: ''}
 										>
 											{#if cell}
-												{@render cell({
-													row,
-													column: col,
-													value,
-													index
-												})}
+												{@render cell({ row, column: col, value, index })}
 											{:else}
-												<span
-													class={`line-clamp-2 text-black dark:text-neutral-50 ${
-														col.align === 'right'
-															? 'ml-auto text-right'
-															: col.align === 'center'
-																? 'mx-auto text-center'
-																: ''
-													}`}
-												>
+												<span class="line-clamp-2 text-black dark:text-neutral-50">
 													{formatValue(col, value, row)}
 												</span>
 											{/if}
@@ -551,33 +503,30 @@
 										data-stop-row-toggle="true"
 									>
 										{#if actions.length}
-											{#if rowActions}
-												{@render rowActions(row, actions)}
-											{:else}
-												<div class="flex items-center gap-1.5">
-													{#if rowCollapse}
-														<button
-															type="button"
-															onclick={(e) => {
-																e.stopPropagation();
-																toggleRow(row, index);
-															}}
-															class={`inline-flex h-6 w-6 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-200/80 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-100 ${
-																openRows.has(id) ? 'rotate-180' : ''
-															}`}
-														>
-															<ChevronDown class="h-3.5 w-3.5" />
-														</button>
-													{/if}
+											<div class="flex items-center gap-1.5">
+												{#if rowCollapse}
 													<button
 														type="button"
-														onclick={(e) => openContextFromButton(e, row)}
-														class="inline-flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-200/80 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-100"
+														onclick={(e) => {
+															e.stopPropagation();
+															toggleRow(row, index);
+														}}
+														class={`inline-flex h-6 w-6 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-200/80 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-100 ${
+															openRows.has(id) ? 'rotate-180' : ''
+														}`}
 													>
-														<EllipsisVertical class="h-4 w-4" />
+														<ChevronDown class="h-3.5 w-3.5" />
 													</button>
-												</div>
-											{/if}
+												{/if}
+
+												<button
+													type="button"
+													onclick={(e) => openContextFromButton(e, row)}
+													class="inline-flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-200/80 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-100"
+												>
+													<EllipsisVertical class="h-4 w-4" />
+												</button>
+											</div>
 										{/if}
 									</div>
 								</div>
@@ -621,27 +570,13 @@
 						{/each}
 					</div>
 				{:else}
-					<!-- GRID VIEW -->
 					<div class="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						{#each controller.currentRows as row, index (rowIdFor(row, index))}
-							{@const id = rowIdFor(row, index)}
-							{@const cols = controller.mainColumns as any[]}
-							{@const firstCol = cols[0]}
-							{@const firstValue = firstCol
-								? firstCol.accessor
-									? firstCol.accessor(row)
-									: (row as any)[firstCol.id]
-								: null}
-							{@const restCols = cols.slice(1)}
 							<div
-								class={`group relative rounded-2xl border border-neutral-200/80 bg-white/80 p-3 text-[11px] text-neutral-800 shadow-sm ring-0 transition-all hover:border-purple-400/70 hover:shadow-md dark:border-neutral-800/80 dark:bg-neutral-900/80 dark:text-neutral-50 ${
-									controller.selectedIds.has(id)
-										? 'bg-purple-50/70 ring-1 ring-purple-400/70 dark:bg-purple-950/20'
-										: ''
-								}`}
+								class="group relative rounded-2xl border border-neutral-200/80 bg-white/80 p-3 text-[11px] text-neutral-800 shadow-sm ring-0 transition-all hover:border-purple-400/70 hover:shadow-md dark:border-neutral-800/80 dark:bg-neutral-900/80 dark:text-neutral-50"
 								oncontextmenu={(e) => openContextAt(e, row)}
 							>
-								<!-- ... tu grid view (igual que antes) ... -->
+								<!-- tu grid content -->
 							</div>
 						{/each}
 					</div>
@@ -655,22 +590,22 @@
 	</div>
 
 	<DataTableFooter />
-
-	<!-- ✅ CONTEXT POPOVER (FIXED) -->
-	<div
-		bind:this={contextPopover}
-		popover="manual"
-		data-context-host="true"
-		class="z-[1300] max-h-[calc(100vh-24px)] max-w-xs min-w-[190px] overflow-auto rounded-2xl border border-neutral-200/80 bg-neutral-50/95 p-1.5 text-xs text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-neutral-700/80 dark:bg-neutral-900/95 dark:text-neutral-50"
-		style={`position: fixed; left: ${contextRender.left}px; top: ${contextRender.top}px;`}
-		onbeforetoggle={(e) => {
-			if ((e as any).newState === 'closed') contextRow = null;
-		}}
-	>
-		{#if contextRow && actions.length}
-			<ContextMenu {actions} row={contextRow} onClose={closeContext} />
-		{:else}
-			<div class="flex flex-col gap-2">No hay acciones disponibles</div>
-		{/if}
-	</div>
 </div>
+<!-- ✅ HOST fuera del overflow-auto (ya no lo recorta) -->
+{#if contextOpen}
+	{#key contextRow}
+		<div
+			bind:this={contextPopover}
+			use:portal
+			data-context-host="true"
+			class="pointer-events-auto fixed z-[999999] max-h-[calc(100vh-24px)] max-w-xs min-w-[190px] overflow-auto rounded-2xl border border-neutral-200/80 bg-neutral-50/95 p-1.5 text-xs text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-neutral-700/80 dark:bg-neutral-900/95 dark:text-neutral-50"
+			style={`left:${contextRender.left}px; top:${contextRender.top}px;`}
+		>
+			{#if contextRow && actions.length}
+				<ContextMenu {actions} row={contextRow} onClose={closeContext} />
+			{:else}
+				<div class="flex flex-col gap-2">No hay acciones disponibles</div>
+			{/if}
+		</div>
+	{/key}
+{/if}
