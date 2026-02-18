@@ -1,5 +1,11 @@
 # @r2digisolutions/ui
 
+## 0.34.9
+
+### Patch Changes
+
+- c669816: fix: version old
+
 ## 0.34.8
 
 ### Patch Changes
